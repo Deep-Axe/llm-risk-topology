@@ -1,0 +1,182 @@
+{
+  "source_manifests": [
+    {
+      "status": "frozen",
+      "sources": [
+        {
+          "source_id": "fixture/prompts",
+          "provider": "github",
+          "repository": "fixture/prompts",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "url": "https://example.org/synthetic-fixture",
+          "license": "CC0-1.0",
+          "access_status": "verified",
+          "stretch": false
+        }
+      ],
+      "schema_version": "1.0.0",
+      "manifest_id": "sources_80f26d61a4a5d89bf194d1aee9b75ea398416bcdcc150143083abdc742012626"
+    }
+  ],
+  "model_manifests": [
+    {
+      "status": "frozen",
+      "stage": "pilot",
+      "models": [
+        {
+          "model_id": "fixture/assistant",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "tokenizer_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "chat_template_sha256": "5773e3217fcf0055f971ed85a76b94714d4f04c4cc9e4b91ed3b65a0ff1ccf83",
+          "family": "fixture",
+          "role": "primary_assistant",
+          "precision": "float32",
+          "system_policy": "No system message."
+        }
+      ],
+      "schema_version": "1.0.0",
+      "manifest_id": "models_1d95926b28d022cedc8f498cdbc434e884799a08f69b6a7f52598b0e5140cee0"
+    }
+  ],
+  "prompt_manifests": [
+    {
+      "status": "frozen",
+      "source_manifest_id": "sources_80f26d61a4a5d89bf194d1aee9b75ea398416bcdcc150143083abdc742012626",
+      "grouping_version": "1.0.0",
+      "selection": {
+        "seed": 42,
+        "description": "Synthetic contract fixture only; not experimental evidence."
+      },
+      "artifacts": [
+        {
+          "path": "fixtures/contracts/prompts.json",
+          "sha256": "fe2605d5e54853d3468358bff5ad4efb39ad931ab8ea3d4724f0a4df3c9b4bcc",
+          "row_count": 2
+        }
+      ],
+      "prompt_ids": [
+        "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+        "p_a14c2ff43773ba280913f9b8ff235ee8901bea42e8e6ebb12849284cca9e8f2b"
+      ],
+      "group_splits": {
+        "g_0988ab5fd9195539f475e1f7bcea0993e487cb47b75be448b304d8587a6454d5": "development"
+      },
+      "schema_version": "1.0.0",
+      "manifest_id": "prompts_353e7ebc9304ca6824ffd2b3ac951252b6c75346cf284947d3478210c0b3d5b1"
+    }
+  ],
+  "run_manifests": [
+    {
+      "status": "frozen",
+      "prompt_manifest_id": "prompts_353e7ebc9304ca6824ffd2b3ac951252b6c75346cf284947d3478210c0b3d5b1",
+      "model_manifest_id": "models_1d95926b28d022cedc8f498cdbc434e884799a08f69b6a7f52598b0e5140cee0",
+      "generation": {
+        "seed": 42,
+        "do_sample": false,
+        "temperature": 0,
+        "top_p": 1,
+        "max_input_tokens": 128,
+        "max_new_tokens": 64,
+        "repetitions": 1
+      },
+      "runtime": {
+        "engine": "synthetic-fixture",
+        "engine_version": "1.0.0",
+        "hardware": "none"
+      },
+      "output_path": "fixtures/contracts/",
+      "schema_version": "1.0.0",
+      "run_id": "run_c39d33ffa19cf964354b29941d6e49ef1e0af91e095989de6fa50f32a6370d8d"
+    }
+  ],
+  "metadata_edges": [
+    {
+      "schema_version": "1.0.0",
+      "edge_id": "e_7dc941924f942a5caeeedced4cb0b1fefc1c6ff03c1e0fdc755941447bd7a53f",
+      "snapshot_id": "3e34b2e3889ec7fe4318099b188fcb7e031eca3485ef2c1d1826cf40e59a0735",
+      "child_model_id": "fixture/assistant",
+      "parent_model_id": "fixture/base",
+      "relation": "fine_tune",
+      "lineage_status": "declared",
+      "evidence": [
+        {
+          "url": "https://example.org/synthetic-fixture",
+          "revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "field": "base_model",
+          "value": "fixture/base"
+        }
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "schema_version": "1.0.0",
+      "prompt_id": "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+      "source_id": "fixture/prompts",
+      "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_config": "default",
+      "source_split": "train",
+      "source_record_id": "0",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Summarize the water cycle."
+        }
+      ],
+      "task_type": "assistant",
+      "variant_type": "original",
+      "parent_prompt_id": null,
+      "group_anchors": [
+        "fixture:water-cycle",
+        "messages:c9ddb045d570ab6013a196e3471707613492322bedc0c3d187b7f154f879ea7f"
+      ],
+      "prompt_sha256": "c9ddb045d570ab6013a196e3471707613492322bedc0c3d187b7f154f879ea7f",
+      "source_labels": {},
+      "prompt_group_id": "g_0988ab5fd9195539f475e1f7bcea0993e487cb47b75be448b304d8587a6454d5"
+    },
+    {
+      "schema_version": "1.0.0",
+      "prompt_id": "p_a14c2ff43773ba280913f9b8ff235ee8901bea42e8e6ebb12849284cca9e8f2b",
+      "source_id": "fixture/prompts",
+      "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "source_config": "default",
+      "source_split": "train",
+      "source_record_id": "1",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Please explain the water cycle briefly."
+        }
+      ],
+      "task_type": "assistant",
+      "variant_type": "paraphrase",
+      "parent_prompt_id": "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+      "group_anchors": [
+        "fixture:water-cycle",
+        "messages:9e1aaf310360cdeb236b957ca69b936321542f6f8c2714ed41671b381abbc967"
+      ],
+      "prompt_sha256": "9e1aaf310360cdeb236b957ca69b936321542f6f8c2714ed41671b381abbc967",
+      "source_labels": {},
+      "prompt_group_id": "g_0988ab5fd9195539f475e1f7bcea0993e487cb47b75be448b304d8587a6454d5"
+    }
+  ],
+  "responses": [
+    {
+      "schema_version": "1.0.0",
+      "response_id": "r_e4923d8aed22f09f61bda00da685720052ebb38d17ec93768e95a6ef41b43598",
+      "run_id": "run_c39d33ffa19cf964354b29941d6e49ef1e0af91e095989de6fa50f32a6370d8d",
+      "prompt_id": "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+      "model_id": "fixture/assistant",
+      "model_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "repetition": 0,
+      "status": "success",
+      "text": "Water evaporates, condenses and falls as precipitation.",
+      "error": null,
+      "input_tokens": 8,
+      "output_tokens": 12,
+      "input_truncated": false,
+      "output_truncated": false,
+      "finish_reason": "stop"
+    }
+  ]
+}

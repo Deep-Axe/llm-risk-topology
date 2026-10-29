@@ -1,0 +1,271 @@
+{
+  "source_manifests": [
+    {
+      "status": "draft",
+      "sources": [
+        {
+          "source_id": "abisee/cnn_dailymail",
+          "provider": "huggingface",
+          "repository": "abisee/cnn_dailymail",
+          "revision": "96df5e686bee6baa90b8bee7c28b81fa3fa6223d",
+          "url": "https://huggingface.co/datasets/abisee/cnn_dailymail",
+          "license": null,
+          "access_status": "verified",
+          "stretch": true
+        },
+        {
+          "source_id": "allenai/wildguardmix",
+          "provider": "huggingface",
+          "repository": "allenai/wildguardmix",
+          "revision": "d29c47f41c8b51348b5c8e8c81c039b3132b66d1",
+          "url": "https://huggingface.co/datasets/allenai/wildguardmix",
+          "license": "odc-by",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "allenai/wildjailbreak",
+          "provider": "huggingface",
+          "repository": "allenai/wildjailbreak",
+          "revision": "5ddc12a7894f842b0619b8e1c7ee496b198af009",
+          "url": "https://huggingface.co/datasets/allenai/wildjailbreak",
+          "license": "odc-by",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "Anthropic/hh-rlhf",
+          "provider": "huggingface",
+          "repository": "Anthropic/hh-rlhf",
+          "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+          "url": "https://huggingface.co/datasets/Anthropic/hh-rlhf",
+          "license": "mit",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "centerforaisafety/HarmBench",
+          "provider": "github",
+          "repository": "centerforaisafety/HarmBench",
+          "revision": "8e1604d1171fe8a48d8febecd22f600e462bdcdd",
+          "url": "https://github.com/centerforaisafety/HarmBench",
+          "license": null,
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "LibrAI/do-not-answer",
+          "provider": "huggingface",
+          "repository": "LibrAI/do-not-answer",
+          "revision": "74e74f2e4507ef256fe536f78a776f4a1ff67955",
+          "url": "https://huggingface.co/datasets/LibrAI/do-not-answer",
+          "license": "apache-2.0",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "liu00222/Open-Prompt-Injection",
+          "provider": "github",
+          "repository": "liu00222/Open-Prompt-Injection",
+          "revision": "fbed5cca347488f88363790ae3ae97c56116da6a",
+          "url": "https://github.com/liu00222/Open-Prompt-Injection",
+          "license": null,
+          "access_status": "card_only",
+          "stretch": true
+        },
+        {
+          "source_id": "llm-attacks/llm-attacks",
+          "provider": "github",
+          "repository": "llm-attacks/llm-attacks",
+          "revision": "098262edf85f807224e70ecd87b9d83716bf6b73",
+          "url": "https://github.com/llm-attacks/llm-attacks",
+          "license": null,
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "lmsys/lmsys-chat-1m",
+          "provider": "huggingface",
+          "repository": "lmsys/lmsys-chat-1m",
+          "revision": "200748d9d3cddcc9d782887541057aca0b18c5da",
+          "url": "https://huggingface.co/datasets/lmsys/lmsys-chat-1m",
+          "license": null,
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "OpenSafetyLab/Salad-Data",
+          "provider": "huggingface",
+          "repository": "OpenSafetyLab/Salad-Data",
+          "revision": "d21a325e276a99bd69b1fbb8aa51a9f249486b72",
+          "url": "https://huggingface.co/datasets/OpenSafetyLab/Salad-Data",
+          "license": "apache-2.0",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "paul-rottger/xstest",
+          "provider": "github",
+          "repository": "paul-rottger/xstest",
+          "revision": "d7bb5bd738c1fcbc36edd83d5e7d1b71a3e2d84d",
+          "url": "https://github.com/paul-rottger/xstest",
+          "license": null,
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "PKU-Alignment/BeaverTails",
+          "provider": "huggingface",
+          "repository": "PKU-Alignment/BeaverTails",
+          "revision": "8401fe609d288129cc684a9b3be6a93e41cfe678",
+          "url": "https://huggingface.co/datasets/PKU-Alignment/BeaverTails",
+          "license": "cc-by-nc-4.0",
+          "access_status": "verified",
+          "stretch": false
+        },
+        {
+          "source_id": "PKU-Alignment/PKU-SafeRLHF",
+          "provider": "huggingface",
+          "repository": "PKU-Alignment/PKU-SafeRLHF",
+          "revision": "9421ffafec3fa40a1f1a7d567b4d525079477ecb",
+          "url": "https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF",
+          "license": "cc-by-nc-4.0",
+          "access_status": "verified",
+          "stretch": false
+        }
+      ],
+      "schema_version": "1.0.0",
+      "manifest_id": "sources_881c02058fb0db8b6edce0fa940a1a7599b7dfd6941378ed112551b9b5f77c1e"
+    }
+  ],
+  "model_manifests": [
+    {
+      "status": "draft",
+      "stage": "8",
+      "models": [
+        {
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.1",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Mistral-7B-v0.1",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "HuggingFaceH4/zephyr-7b-beta",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Mistral-7B-v0.1",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "teknium/OpenHermes-2.5-Mistral-7B",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Mistral-7B-v0.1",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Llama-3.1-8B",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "NousResearch/Hermes-3-Llama-3.1-8B",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Llama-3.1-8B",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "dphn/dolphin-2.9.4-llama3.1-8b",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Llama-3.1-8B",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "allenai/Llama-3.1-Tulu-3-8B",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Llama-3.1-8B",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        },
+        {
+          "model_id": "Qwen/Qwen2.5-7B-Instruct",
+          "revision": null,
+          "tokenizer_revision": null,
+          "chat_template_sha256": null,
+          "family": "Qwen2.5-7B",
+          "role": "primary_assistant",
+          "precision": null,
+          "system_policy": null
+        }
+      ],
+      "schema_version": "1.0.0",
+      "manifest_id": "models_722a3a31e009911ac3de6470ca7ea3bf95039a6b5f11d72f77dfae34d116f2e4"
+    }
+  ],
+  "prompt_manifests": [
+    {
+      "status": "draft",
+      "source_manifest_id": "sources_881c02058fb0db8b6edce0fa940a1a7599b7dfd6941378ed112551b9b5f77c1e",
+      "grouping_version": "1.0.0",
+      "selection": {
+        "seed": 42,
+        "description": "Pending source adapters, deduplication, grouping and audited pilot selection."
+      },
+      "artifacts": [],
+      "prompt_ids": [],
+      "group_splits": {},
+      "schema_version": "1.0.0",
+      "manifest_id": "prompts_819a4ccc73a8c792e00a87cd8bb63b14156429813f5bd7bb6a9c6140437399f9"
+    }
+  ],
+  "run_manifests": [
+    {
+      "status": "draft",
+      "prompt_manifest_id": "prompts_819a4ccc73a8c792e00a87cd8bb63b14156429813f5bd7bb6a9c6140437399f9",
+      "model_manifest_id": "models_722a3a31e009911ac3de6470ca7ea3bf95039a6b5f11d72f77dfae34d116f2e4",
+      "generation": {
+        "seed": 42,
+        "do_sample": false,
+        "temperature": 0,
+        "top_p": 1,
+        "max_input_tokens": 2048,
+        "max_new_tokens": 256,
+        "repetitions": 1
+      },
+      "runtime": {
+        "engine": null,
+        "engine_version": null,
+        "hardware": null
+      },
+      "output_path": "data/raw/responses/pilot/",
+      "schema_version": "1.0.0",
+      "run_id": "run_9a0790093984b0f39b8753b4a412385a06f5d03b0cda7079c772b1c729b00031"
+    }
+  ]
+}

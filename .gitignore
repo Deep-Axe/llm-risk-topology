@@ -1,0 +1,24 @@
+# Data dumps
+data/raw/
+data/processed/
+*.parquet
+*.jsonl
+
+# Hadoop / Spark local
+metastore_db/
+spark-warehouse/
+derby.log
+*.crc
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+.ipynb_checkpoints/
+
+# Secrets
+.env
+hf_token.txt
+
+# Temp extract
+plan_extract.md

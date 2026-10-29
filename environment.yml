@@ -1,0 +1,10 @@
+name: risk-topology
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - openjdk=11
+  - pip
+  - pip:
+      - -r requirements.txt

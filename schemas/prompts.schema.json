@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "prompts",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^p_[0-9a-f]{64}$"
+    },
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "source_config": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_split": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool"
+            ]
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "task_type": {
+      "enum": [
+        "assistant",
+        "summarization",
+        "classification",
+        "prompt_injection"
+      ]
+    },
+    "variant_type": {
+      "enum": [
+        "original",
+        "adversarial",
+        "defense",
+        "paraphrase",
+        "conversation_turn",
+        "unpaired"
+      ]
+    },
+    "parent_prompt_id": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^p_[0-9a-f]{64}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "prompt_group_id": {
+      "type": "string",
+      "pattern": "^g_[0-9a-f]{64}$"
+    },
+    "group_anchors": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1
+    },
+    "prompt_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_labels": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "prompt_id",
+    "source_id",
+    "source_revision",
+    "source_config",
+    "source_split",
+    "source_record_id",
+    "messages",
+    "task_type",
+    "variant_type",
+    "parent_prompt_id",
+    "prompt_group_id",
+    "group_anchors",
+    "prompt_sha256",
+    "source_labels"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "run_manifests",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "frozen"
+      ]
+    },
+    "prompt_manifest_id": {
+      "type": "string",
+      "pattern": "^prompts_[0-9a-f]{64}$"
+    },
+    "model_manifest_id": {
+      "type": "string",
+      "pattern": "^models_[0-9a-f]{64}$"
+    },
+    "generation": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "do_sample": {
+          "type": "boolean"
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0
+        },
+        "top_p": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "max_input_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_new_tokens": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "seed",
+        "do_sample",
+        "temperature",
+        "top_p",
+        "max_input_tokens",
+        "max_new_tokens",
+        "repetitions"
+      ],
+      "additionalProperties": false
+    },
+    "runtime": {
+      "type": "object",
+      "properties": {
+        "engine": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "engine_version": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hardware": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "engine",
+        "engine_version",
+        "hardware"
+      ],
+      "additionalProperties": false
+    },
+    "output_path": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "run_id",
+    "status",
+    "prompt_manifest_id",
+    "model_manifest_id",
+    "generation",
+    "runtime",
+    "output_path"
+  ],
+  "additionalProperties": false
+}

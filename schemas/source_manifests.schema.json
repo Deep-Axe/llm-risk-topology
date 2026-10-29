@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "source_manifests",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "manifest_id": {
+      "type": "string",
+      "pattern": "^sources_[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "frozen"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider": {
+            "enum": [
+              "huggingface",
+              "github"
+            ]
+          },
+          "repository": {
+            "type": "string",
+            "pattern": "^[^/\\s]+/[^/\\s]+$"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1
+          },
+          "license": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "access_status": {
+            "enum": [
+              "verified",
+              "card_only",
+              "pending",
+              "failed"
+            ]
+          },
+          "stretch": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source_id",
+          "provider",
+          "repository",
+          "revision",
+          "url",
+          "license",
+          "access_status",
+          "stretch"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "status",
+    "sources"
+  ],
+  "additionalProperties": false
+}

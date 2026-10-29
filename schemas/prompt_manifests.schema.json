@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "prompt_manifests",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "manifest_id": {
+      "type": "string",
+      "pattern": "^prompts_[0-9a-f]{64}$"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "frozen"
+      ]
+    },
+    "source_manifest_id": {
+      "type": "string",
+      "pattern": "^sources_[0-9a-f]{64}$"
+    },
+    "grouping_version": {
+      "const": "1.0.0"
+    },
+    "selection": {
+      "type": "object",
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "seed",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "row_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "row_count"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 0
+    },
+    "prompt_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^p_[0-9a-f]{64}$"
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    },
+    "group_splits": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^g_[0-9a-f]{64}$"
+      },
+      "additionalProperties": {
+        "enum": [
+          "development",
+          "validation",
+          "test"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "status",
+    "source_manifest_id",
+    "grouping_version",
+    "selection",
+    "artifacts",
+    "prompt_ids",
+    "group_splits"
+  ],
+  "additionalProperties": false
+}

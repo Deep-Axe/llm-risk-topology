@@ -1,0 +1,52 @@
+[
+  {
+    "schema_version": "1.0.0",
+    "prompt_id": "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+    "source_id": "fixture/prompts",
+    "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_config": "default",
+    "source_split": "train",
+    "source_record_id": "0",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Summarize the water cycle."
+      }
+    ],
+    "task_type": "assistant",
+    "variant_type": "original",
+    "parent_prompt_id": null,
+    "group_anchors": [
+      "fixture:water-cycle",
+      "messages:c9ddb045d570ab6013a196e3471707613492322bedc0c3d187b7f154f879ea7f"
+    ],
+    "prompt_sha256": "c9ddb045d570ab6013a196e3471707613492322bedc0c3d187b7f154f879ea7f",
+    "source_labels": {},
+    "prompt_group_id": "g_0988ab5fd9195539f475e1f7bcea0993e487cb47b75be448b304d8587a6454d5"
+  },
+  {
+    "schema_version": "1.0.0",
+    "prompt_id": "p_a14c2ff43773ba280913f9b8ff235ee8901bea42e8e6ebb12849284cca9e8f2b",
+    "source_id": "fixture/prompts",
+    "source_revision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "source_config": "default",
+    "source_split": "train",
+    "source_record_id": "1",
+    "messages": [
+      {
+        "role": "user",
+        "content": "Please explain the water cycle briefly."
+      }
+    ],
+    "task_type": "assistant",
+    "variant_type": "paraphrase",
+    "parent_prompt_id": "p_c83d34d7da2622be696371043d02314fd1ea2c6907cdea1ef4284b5f5ea0eed4",
+    "group_anchors": [
+      "fixture:water-cycle",
+      "messages:9e1aaf310360cdeb236b957ca69b936321542f6f8c2714ed41671b381abbc967"
+    ],
+    "prompt_sha256": "9e1aaf310360cdeb236b957ca69b936321542f6f8c2714ed41671b381abbc967",
+    "source_labels": {},
+    "prompt_group_id": "g_0988ab5fd9195539f475e1f7bcea0993e487cb47b75be448b304d8587a6454d5"
+  }
+]

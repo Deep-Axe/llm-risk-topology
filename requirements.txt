@@ -1,0 +1,31 @@
+# Python 3.11 — project venv: .venv
+# Core HuggingFace / NLP
+huggingface_hub>=0.26.0,<1
+xxhash>=3.0.0
+datasets>=3.0.0,<4
+transformers>=4.46.0,<5
+sentence-transformers>=3.3.0
+accelerate>=1.1.0
+
+# Data / graph / ML
+pandas>=2.2.0
+numpy>=1.26.0
+scipy>=1.13.0
+pyarrow>=17.0.0
+networkx>=3.3
+scikit-learn>=1.5.0
+
+# Spark client pin must match WSL Spark 3.5.5.
+# GraphX / Pregel / MLlib jobs run in that WSL runtime, not Windows local[*].
+pyspark==3.5.5
+
+# Viz + plumbing
+matplotlib>=3.9.0
+seaborn>=0.13.0
+tqdm>=4.66.0
+python-dotenv>=1.0.0
+pyyaml>=6.0.2
+jsonlines>=4.0.0
+requests>=2.32.0
+jsonschema>=4.23.0,<5
+lxml>=5.3.0

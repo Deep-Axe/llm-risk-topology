@@ -1,0 +1,4923 @@
+{
+  "sources": [
+    {
+      "source": "abisee/cnn_dailymail",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/abisee/cnn_dailymail",
+      "revision": "96df5e686bee6baa90b8bee7c28b81fa3fa6223d",
+      "inspected_at": "2026-10-29T01:39:06.978804+00:00",
+      "stretch": true,
+      "sampled_rows": 27,
+      "partitions": [
+        {
+          "config": "1.0.0",
+          "split": "train",
+          "num_rows_total": 287113,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "1.0.0",
+          "split": "validation",
+          "num_rows_total": 13368,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "1.0.0",
+          "split": "test",
+          "num_rows_total": 11490,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "2.0.0",
+          "split": "train",
+          "num_rows_total": 287113,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "2.0.0",
+          "split": "validation",
+          "num_rows_total": 13368,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "2.0.0",
+          "split": "test",
+          "num_rows_total": 11490,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "3.0.0",
+          "split": "train",
+          "num_rows_total": 287113,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "3.0.0",
+          "split": "validation",
+          "num_rows_total": 13368,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "3.0.0",
+          "split": "test",
+          "num_rows_total": 11490,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "article",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "highlights",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": [
+        {
+          "config_name": "1.0.0",
+          "features": [
+            {
+              "name": "article",
+              "dtype": "string"
+            },
+            {
+              "name": "highlights",
+              "dtype": "string"
+            },
+            {
+              "name": "id",
+              "dtype": "string"
+            }
+          ],
+          "splits": [
+            {
+              "name": "train",
+              "num_bytes": 1261703785,
+              "num_examples": 287113
+            },
+            {
+              "name": "validation",
+              "num_bytes": 57732412,
+              "num_examples": 13368
+            },
+            {
+              "name": "test",
+              "num_bytes": 49925732,
+              "num_examples": 11490
+            }
+          ],
+          "download_size": 836927248,
+          "dataset_size": 1369361929
+        },
+        {
+          "config_name": "2.0.0",
+          "features": [
+            {
+              "name": "article",
+              "dtype": "string"
+            },
+            {
+              "name": "highlights",
+              "dtype": "string"
+            },
+            {
+              "name": "id",
+              "dtype": "string"
+            }
+          ],
+          "splits": [
+            {
+              "name": "train",
+              "num_bytes": 1261703785,
+              "num_examples": 287113
+            },
+            {
+              "name": "validation",
+              "num_bytes": 57732412,
+              "num_examples": 13368
+            },
+            {
+              "name": "test",
+              "num_bytes": 49925732,
+              "num_examples": 11490
+            }
+          ],
+          "download_size": 837094602,
+          "dataset_size": 1369361929
+        },
+        {
+          "config_name": "3.0.0",
+          "features": [
+            {
+              "name": "article",
+              "dtype": "string"
+            },
+            {
+              "name": "highlights",
+              "dtype": "string"
+            },
+            {
+              "name": "id",
+              "dtype": "string"
+            }
+          ],
+          "splits": [
+            {
+              "name": "train",
+              "num_bytes": 1261703785,
+              "num_examples": 287113
+            },
+            {
+              "name": "validation",
+              "num_bytes": 57732412,
+              "num_examples": 13368
+            },
+            {
+              "name": "test",
+              "num_bytes": 49925732,
+              "num_examples": 11490
+            }
+          ],
+          "download_size": 837094602,
+          "dataset_size": 1369361929
+        }
+      ],
+      "declared_configs": [
+        {
+          "config_name": "1.0.0",
+          "data_files": [
+            {
+              "split": "train",
+              "path": "1.0.0/train-*"
+            },
+            {
+              "split": "validation",
+              "path": "1.0.0/validation-*"
+            },
+            {
+              "split": "test",
+              "path": "1.0.0/test-*"
+            }
+          ]
+        },
+        {
+          "config_name": "2.0.0",
+          "data_files": [
+            {
+              "split": "train",
+              "path": "2.0.0/train-*"
+            },
+            {
+              "split": "validation",
+              "path": "2.0.0/validation-*"
+            },
+            {
+              "split": "test",
+              "path": "2.0.0/test-*"
+            }
+          ]
+        },
+        {
+          "config_name": "3.0.0",
+          "data_files": [
+            {
+              "split": "train",
+              "path": "3.0.0/train-*"
+            },
+            {
+              "split": "validation",
+              "path": "3.0.0/validation-*"
+            },
+            {
+              "split": "test",
+              "path": "3.0.0/test-*"
+            }
+          ]
+        }
+      ],
+      "license": [
+        "apache-2.0"
+      ],
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "allenai/wildguardmix",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/allenai/wildguardmix",
+      "revision": "d29c47f41c8b51348b5c8e8c81c039b3132b66d1",
+      "inspected_at": "2026-10-29T01:51:56.778657+00:00",
+      "stretch": false,
+      "sampled_rows": 6,
+      "partitions": [
+        {
+          "config": "wildguardtest",
+          "split": "test",
+          "num_rows_total": 1725,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "adversarial",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_harm_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_refusal_agreement",
+              "type": {
+                "dtype": "float64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_refusal_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "response_harm_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "subcategory",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "prompt_harm_agreement",
+              "type": {
+                "dtype": "float64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_harm_agreement",
+              "type": {
+                "dtype": "float64",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "wildguardtrain",
+          "split": "train",
+          "num_rows_total": 86759,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "adversarial",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_harm_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_refusal_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_harm_label",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "subcategory",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": [
+        {
+          "config_name": "wildguardtrain",
+          "data_files": [
+            {
+              "split": "train",
+              "path": "train/wildguard_train.parquet"
+            }
+          ]
+        },
+        {
+          "config_name": "wildguardtest",
+          "data_files": [
+            {
+              "split": "test",
+              "path": "test/wildguard_test.parquet"
+            }
+          ]
+        }
+      ],
+      "license": "odc-by",
+      "parquet_footers": [
+        {
+          "path": "test/wildguard_test.parquet",
+          "fields": [
+            {
+              "name": "prompt",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "response",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "adversarial",
+              "type": "bool",
+              "nullable": true
+            },
+            {
+              "name": "prompt_harm_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "response_refusal_agreement",
+              "type": "double",
+              "nullable": true
+            },
+            {
+              "name": "response_refusal_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "response_harm_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "subcategory",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "prompt_harm_agreement",
+              "type": "double",
+              "nullable": true
+            },
+            {
+              "name": "response_harm_agreement",
+              "type": "double",
+              "nullable": true
+            }
+          ],
+          "shard_rows": 1725,
+          "bytes_read": 65536,
+          "evidence_note": "Pinned file footer schema only; no data rows read."
+        },
+        {
+          "path": "train/wildguard_train.parquet",
+          "fields": [
+            {
+              "name": "prompt",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "adversarial",
+              "type": "bool",
+              "nullable": true
+            },
+            {
+              "name": "response",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "prompt_harm_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "response_refusal_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "response_harm_label",
+              "type": "string",
+              "nullable": true
+            },
+            {
+              "name": "subcategory",
+              "type": "string",
+              "nullable": true
+            }
+          ],
+          "shard_rows": 86759,
+          "bytes_read": 65536,
+          "evidence_note": "Pinned file footer schema only; no data rows read."
+        }
+      ],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "allenai/wildjailbreak",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/allenai/wildjailbreak",
+      "revision": "5ddc12a7894f842b0619b8e1c7ee496b198af009",
+      "inspected_at": "2026-10-29T01:41:19.832126+00:00",
+      "stretch": false,
+      "sampled_rows": 6,
+      "partitions": [
+        {
+          "config": "eval",
+          "split": "train",
+          "num_rows_total": 2210,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "adversarial",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "label",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "data_type",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "train",
+          "split": "train",
+          "error": "500 Server Error: Internal Server Error for url: https://datasets-server.huggingface.co/rows?dataset=allenai%2Fwildjailbreak&config=train&split=train&offset=0&length=3",
+          "sampled_rows": 0
+        },
+        {
+          "path": "train/train.tsv",
+          "method": "bounded streamed CSV head",
+          "fields": [
+            "vanilla",
+            "adversarial",
+            "completion",
+            "data_type"
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": [
+        {
+          "config_name": "train",
+          "data_files": "train/train.tsv"
+        },
+        {
+          "config_name": "eval",
+          "data_files": "eval/eval.tsv"
+        }
+      ],
+      "license": "odc-by",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "Anthropic/hh-rlhf",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/Anthropic/hh-rlhf",
+      "revision": "09be8c5bbc57cb3887f3a9732ad6aa7ec602a1fa",
+      "inspected_at": "2026-10-29T01:41:49.427518+00:00",
+      "stretch": false,
+      "sampled_rows": 9,
+      "partitions": [
+        {
+          "config": "default",
+          "split": "train",
+          "num_rows_total": 160800,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "chosen",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "rejected",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "default",
+          "split": "test",
+          "num_rows_total": 8552,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "chosen",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "rejected",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "path": "red-team-attempts/red_team_attempts.jsonl.gz",
+          "method": "bounded streamed gzip JSON head (source uses a JSON array despite JSONL filename)",
+          "fields": [
+            "transcript",
+            "min_harmlessness_score_transcript",
+            "num_params",
+            "model_type",
+            "rating",
+            "task_description",
+            "task_descripton_harmlessness_score",
+            "red_team_member_id",
+            "is_upworker",
+            "tags"
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": null,
+      "license": "mit",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "centerforaisafety/HarmBench",
+      "provider": "github",
+      "url": "https://github.com/centerforaisafety/HarmBench",
+      "revision": "8e1604d1171fe8a48d8febecd22f600e462bdcdd",
+      "inspected_at": "2026-10-29T01:39:06.296334+00:00",
+      "stretch": false,
+      "sampled_rows": 12,
+      "partitions": [
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_all.csv",
+          "fields": [
+            "Behavior",
+            "FunctionalCategory",
+            "SemanticCategory",
+            "Tags",
+            "ContextString",
+            "BehaviorID"
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_val.csv",
+          "fields": [
+            "Behavior",
+            "FunctionalCategory",
+            "SemanticCategory",
+            "Tags",
+            "ContextString",
+            "BehaviorID"
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_text_test.csv",
+          "fields": [
+            "Behavior",
+            "FunctionalCategory",
+            "SemanticCategory",
+            "Tags",
+            "ContextString",
+            "BehaviorID"
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "path": "data/behavior_datasets/harmbench_behaviors_multimodal_all.csv",
+          "fields": [
+            "Behavior",
+            "BehaviorID",
+            "FunctionalCategory",
+            "SemanticCategory",
+            "ImageFileName",
+            "Source",
+            "ImageDescription",
+            "RedactedImageDescription",
+            "Tags"
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": null,
+      "license": null,
+      "parquet_footers": [],
+      "viewer_revision_note": null,
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "LibrAI/do-not-answer",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/LibrAI/do-not-answer",
+      "revision": "74e74f2e4507ef256fe536f78a776f4a1ff67955",
+      "inspected_at": "2026-10-29T01:39:02.140220+00:00",
+      "stretch": false,
+      "sampled_rows": 3,
+      "partitions": [
+        {
+          "config": "default",
+          "split": "train",
+          "num_rows_total": 939,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "risk_area",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "types_of_harm",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "specific_harms",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "question",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "GPT4_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "GPT4_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "GPT4_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "ChatGPT_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "ChatGPT_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "ChatGPT_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "Claude_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "Claude_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "Claude_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "ChatGLM2_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "ChatGLM2_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 16,
+              "name": "ChatGLM2_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 17,
+              "name": "llama2-7b-chat_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 18,
+              "name": "llama2-7b-chat_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 19,
+              "name": "llama2-7b-chat_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 20,
+              "name": "vicuna-7b_response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 21,
+              "name": "vicuna-7b_harmful",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 22,
+              "name": "vicuna-7b_action",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": {
+        "features": [
+          {
+            "name": "id",
+            "dtype": "int64"
+          },
+          {
+            "name": "risk_area",
+            "dtype": "string"
+          },
+          {
+            "name": "types_of_harm",
+            "dtype": "string"
+          },
+          {
+            "name": "specific_harms",
+            "dtype": "string"
+          },
+          {
+            "name": "question",
+            "dtype": "string"
+          },
+          {
+            "name": "GPT4_response",
+            "dtype": "string"
+          },
+          {
+            "name": "GPT4_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "GPT4_action",
+            "dtype": "int64"
+          },
+          {
+            "name": "ChatGPT_response",
+            "dtype": "string"
+          },
+          {
+            "name": "ChatGPT_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "ChatGPT_action",
+            "dtype": "int64"
+          },
+          {
+            "name": "Claude_response",
+            "dtype": "string"
+          },
+          {
+            "name": "Claude_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "Claude_action",
+            "dtype": "int64"
+          },
+          {
+            "name": "ChatGLM2_response",
+            "dtype": "string"
+          },
+          {
+            "name": "ChatGLM2_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "ChatGLM2_action",
+            "dtype": "int64"
+          },
+          {
+            "name": "llama2-7b-chat_response",
+            "dtype": "string"
+          },
+          {
+            "name": "llama2-7b-chat_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "llama2-7b-chat_action",
+            "dtype": "int64"
+          },
+          {
+            "name": "vicuna-7b_response",
+            "dtype": "string"
+          },
+          {
+            "name": "vicuna-7b_harmful",
+            "dtype": "int64"
+          },
+          {
+            "name": "vicuna-7b_action",
+            "dtype": "int64"
+          }
+        ],
+        "splits": [
+          {
+            "name": "train",
+            "num_bytes": 3997193,
+            "num_examples": 939
+          }
+        ],
+        "download_size": 1709142,
+        "dataset_size": 3997193
+      },
+      "declared_configs": null,
+      "license": "apache-2.0",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "liu00222/Open-Prompt-Injection",
+      "provider": "github",
+      "url": "https://github.com/liu00222/Open-Prompt-Injection",
+      "revision": "fbed5cca347488f88363790ae3ae97c56116da6a",
+      "inspected_at": "2026-10-29T01:39:18.275008+00:00",
+      "stretch": true,
+      "sampled_rows": 0,
+      "partitions": [],
+      "declared_dataset_info": null,
+      "declared_configs": null,
+      "license": null,
+      "parquet_footers": [],
+      "viewer_revision_note": null,
+      "task_artifact_paths": [
+        "OpenPromptInjection/tasks/CompromiseTask.py",
+        "OpenPromptInjection/tasks/InjectedTask.py",
+        "OpenPromptInjection/tasks/Math500.py",
+        "OpenPromptInjection/tasks/ReasoningTask.py",
+        "OpenPromptInjection/tasks/TargetTask.py",
+        "OpenPromptInjection/tasks/Task.py",
+        "OpenPromptInjection/tasks/__init__.py",
+        "OpenPromptInjection/tasks/gigaword.py",
+        "OpenPromptInjection/tasks/gleu.py",
+        "OpenPromptInjection/tasks/hsol.py",
+        "OpenPromptInjection/tasks/jfleg.py",
+        "OpenPromptInjection/tasks/registry.py",
+        "OpenPromptInjection/tasks/sms_spam.py",
+        "OpenPromptInjection/tasks/sst2.py",
+        "OpenPromptInjection/tasks/utils.py",
+        "configs/task_configs/compromise_config.json",
+        "configs/task_configs/gigaword_config.json",
+        "configs/task_configs/hsol_config.json",
+        "configs/task_configs/jfleg_config.json",
+        "configs/task_configs/math500_config.json",
+        "configs/task_configs/mrpc_config.json",
+        "configs/task_configs/rte_config.json",
+        "configs/task_configs/sms_spam_config.json",
+        "configs/task_configs/sst2_config.json"
+      ],
+      "errors": []
+    },
+    {
+      "source": "llm-attacks/llm-attacks",
+      "provider": "github",
+      "url": "https://github.com/llm-attacks/llm-attacks",
+      "revision": "098262edf85f807224e70ecd87b9d83716bf6b73",
+      "inspected_at": "2026-10-29T01:39:06.300189+00:00",
+      "stretch": false,
+      "sampled_rows": 6,
+      "partitions": [
+        {
+          "path": "data/advbench/harmful_behaviors.csv",
+          "fields": [
+            "goal",
+            "target"
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "path": "data/advbench/harmful_strings.csv",
+          "fields": [
+            "target"
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": null,
+      "license": null,
+      "parquet_footers": [],
+      "viewer_revision_note": null,
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "lmsys/lmsys-chat-1m",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/lmsys/lmsys-chat-1m",
+      "revision": "200748d9d3cddcc9d782887541057aca0b18c5da",
+      "inspected_at": "2026-10-29T01:51:53.576687+00:00",
+      "stretch": false,
+      "sampled_rows": 3,
+      "partitions": [
+        {
+          "config": "default",
+          "split": "train",
+          "num_rows_total": 1000000,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "conversation_id",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "model",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "conversation",
+              "type": {
+                "feature": {
+                  "content": {
+                    "dtype": "string",
+                    "_type": "Value"
+                  },
+                  "role": {
+                    "dtype": "string",
+                    "_type": "Value"
+                  }
+                },
+                "_type": "List"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "turn",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "language",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "openai_moderation",
+              "type": {
+                "feature": {
+                  "categories": {
+                    "harassment": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "harassment/threatening": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "hate": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "hate/threatening": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "self-harm": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "self-harm/instructions": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "self-harm/intent": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "sexual": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "sexual/minors": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "violence": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    },
+                    "violence/graphic": {
+                      "dtype": "bool",
+                      "_type": "Value"
+                    }
+                  },
+                  "category_scores": {
+                    "harassment": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "harassment/threatening": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "hate": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "hate/threatening": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "self-harm": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "self-harm/instructions": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "self-harm/intent": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "sexual": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "sexual/minors": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "violence": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    },
+                    "violence/graphic": {
+                      "dtype": "float64",
+                      "_type": "Value"
+                    }
+                  },
+                  "flagged": {
+                    "dtype": "bool",
+                    "_type": "Value"
+                  }
+                },
+                "_type": "List"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "redacted",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": {
+        "features": [
+          {
+            "name": "conversation_id",
+            "dtype": "string"
+          },
+          {
+            "name": "model",
+            "dtype": "string"
+          },
+          {
+            "name": "conversation",
+            "list": [
+              {
+                "name": "content",
+                "dtype": "string"
+              },
+              {
+                "name": "role",
+                "dtype": "string"
+              }
+            ]
+          },
+          {
+            "name": "turn",
+            "dtype": "int64"
+          },
+          {
+            "name": "language",
+            "dtype": "string"
+          },
+          {
+            "name": "openai_moderation",
+            "list": [
+              {
+                "name": "categories",
+                "struct": [
+                  {
+                    "name": "harassment",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "harassment/threatening",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "hate",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "hate/threatening",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "self-harm",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "self-harm/instructions",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "self-harm/intent",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "sexual",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "sexual/minors",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "violence",
+                    "dtype": "bool"
+                  },
+                  {
+                    "name": "violence/graphic",
+                    "dtype": "bool"
+                  }
+                ]
+              },
+              {
+                "name": "category_scores",
+                "struct": [
+                  {
+                    "name": "harassment",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "harassment/threatening",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "hate",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "hate/threatening",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "self-harm",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "self-harm/instructions",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "self-harm/intent",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "sexual",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "sexual/minors",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "violence",
+                    "dtype": "float64"
+                  },
+                  {
+                    "name": "violence/graphic",
+                    "dtype": "float64"
+                  }
+                ]
+              },
+              {
+                "name": "flagged",
+                "dtype": "bool"
+              }
+            ]
+          },
+          {
+            "name": "redacted",
+            "dtype": "bool"
+          }
+        ],
+        "splits": [
+          {
+            "name": "train",
+            "num_bytes": 2626438904,
+            "num_examples": 1000000
+          }
+        ],
+        "download_size": 1488850250,
+        "dataset_size": 2626438904
+      },
+      "declared_configs": [
+        {
+          "config_name": "default",
+          "data_files": [
+            {
+              "split": "train",
+              "path": "data/train-*"
+            }
+          ]
+        }
+      ],
+      "license": null,
+      "parquet_footers": [
+        {
+          "path": "data/train-00000-of-00006-4feeb3f83346a0e9.parquet",
+          "error": "DNS resolution failed for us.aws.cdn.hf.co; viewer row/schema request succeeded."
+        }
+      ],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "OpenSafetyLab/Salad-Data",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/OpenSafetyLab/Salad-Data",
+      "revision": "d21a325e276a99bd69b1fbb8aa51a9f249486b72",
+      "inspected_at": "2026-10-29T01:39:03.164110+00:00",
+      "stretch": false,
+      "sampled_rows": 15,
+      "partitions": [
+        {
+          "config": "attack_enhanced_set",
+          "split": "train",
+          "num_rows_total": 5000,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "qid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "aid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "baseq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "augq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "method",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "1-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "2-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "3-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "base_set",
+          "split": "train",
+          "num_rows_total": 21318,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "qid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "question",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "1-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "2-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "3-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "defense_enhanced_set",
+          "split": "train",
+          "num_rows_total": 200,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "qid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "did",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "baseq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "daugq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "dmethod",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "1-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "2-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "3-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "mcq_set",
+          "split": "train",
+          "num_rows_total": 3840,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "mcq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "baseq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "choices",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "gt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "1-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "2-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "3-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "small_attack_subset",
+          "split": "train",
+          "num_rows_total": 300,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "qid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "aid",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "baseq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "augq",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "method",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "1-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "2-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "3-category",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": [
+        {
+          "config_name": "base_set",
+          "data_files": "base_set.json"
+        },
+        {
+          "config_name": "attack_enhanced_set",
+          "data_files": "attack_enhanced_set.json"
+        },
+        {
+          "config_name": "small_attack_subset",
+          "data_files": "small_attack_subset.json"
+        },
+        {
+          "config_name": "defense_enhanced_set",
+          "data_files": "defense_enhanced_set.json"
+        },
+        {
+          "config_name": "mcq_set",
+          "data_files": "mcq_set.json"
+        }
+      ],
+      "license": "apache-2.0",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "paul-rottger/xstest",
+      "provider": "github",
+      "url": "https://github.com/paul-rottger/xstest",
+      "revision": "d7bb5bd738c1fcbc36edd83d5e7d1b71a3e2d84d",
+      "inspected_at": "2026-10-29T01:39:03.987576+00:00",
+      "stretch": false,
+      "sampled_rows": 3,
+      "partitions": [
+        {
+          "path": "xstest_prompts.csv",
+          "fields": [
+            "id",
+            "prompt",
+            "type",
+            "label",
+            "focus",
+            "note"
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": null,
+      "license": null,
+      "parquet_footers": [],
+      "viewer_revision_note": null,
+      "task_artifact_paths": [],
+      "errors": [
+        "404 Client Error: Not Found for url: https://raw.githubusercontent.com/paul-rottger/xstest/d7bb5bd738c1fcbc36edd83d5e7d1b71a3e2d84d/README.md"
+      ]
+    },
+    {
+      "source": "PKU-Alignment/BeaverTails",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/PKU-Alignment/BeaverTails",
+      "revision": "8401fe609d288129cc684a9b3be6a93e41cfe678",
+      "inspected_at": "2026-10-29T01:39:00.259179+00:00",
+      "stretch": false,
+      "sampled_rows": 12,
+      "partitions": [
+        {
+          "config": "default",
+          "split": "330k_train",
+          "num_rows_total": 300567,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "category",
+              "type": {
+                "animal_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "child_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "controversial_topics,politics": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "discrimination,stereotype,injustice": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "drug_abuse,weapons,banned_substance": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "financial_crime,property_crime,theft": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "hate_speech,offensive_language": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "misinformation_regarding_ethics,laws_and_safety": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "non_violent_unethical_behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "privacy_violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "self_harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "sexually_explicit,adult_content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "terrorism,organized_crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "violence,aiding_and_abetting,incitement": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "is_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "default",
+          "split": "330k_test",
+          "num_rows_total": 33396,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "category",
+              "type": {
+                "animal_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "child_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "controversial_topics,politics": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "discrimination,stereotype,injustice": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "drug_abuse,weapons,banned_substance": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "financial_crime,property_crime,theft": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "hate_speech,offensive_language": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "misinformation_regarding_ethics,laws_and_safety": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "non_violent_unethical_behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "privacy_violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "self_harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "sexually_explicit,adult_content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "terrorism,organized_crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "violence,aiding_and_abetting,incitement": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "is_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "default",
+          "split": "30k_train",
+          "num_rows_total": 27186,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "category",
+              "type": {
+                "animal_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "child_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "controversial_topics,politics": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "discrimination,stereotype,injustice": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "drug_abuse,weapons,banned_substance": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "financial_crime,property_crime,theft": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "hate_speech,offensive_language": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "misinformation_regarding_ethics,laws_and_safety": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "non_violent_unethical_behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "privacy_violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "self_harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "sexually_explicit,adult_content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "terrorism,organized_crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "violence,aiding_and_abetting,incitement": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "is_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "default",
+          "split": "30k_test",
+          "num_rows_total": 3021,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "category",
+              "type": {
+                "animal_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "child_abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "controversial_topics,politics": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "discrimination,stereotype,injustice": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "drug_abuse,weapons,banned_substance": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "financial_crime,property_crime,theft": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "hate_speech,offensive_language": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "misinformation_regarding_ethics,laws_and_safety": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "non_violent_unethical_behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "privacy_violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "self_harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "sexually_explicit,adult_content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "terrorism,organized_crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "violence,aiding_and_abetting,incitement": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "is_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": [
+        {
+          "config_name": "default",
+          "data_files": [
+            {
+              "split": "330k_train",
+              "path": "round0/330k/train.jsonl.xz"
+            },
+            {
+              "split": "330k_test",
+              "path": "round0/330k/test.jsonl.xz"
+            },
+            {
+              "split": "30k_train",
+              "path": "round0/30k/train.jsonl.gz"
+            },
+            {
+              "split": "30k_test",
+              "path": "round0/30k/test.jsonl.gz"
+            }
+          ]
+        }
+      ],
+      "license": "cc-by-nc-4.0",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    },
+    {
+      "source": "PKU-Alignment/PKU-SafeRLHF",
+      "provider": "huggingface",
+      "url": "https://huggingface.co/datasets/PKU-Alignment/PKU-SafeRLHF",
+      "revision": "9421ffafec3fa40a1f1a7d567b4d525079477ecb",
+      "inspected_at": "2026-10-29T01:39:08.103839+00:00",
+      "stretch": false,
+      "sampled_rows": 24,
+      "partitions": [
+        {
+          "config": "default",
+          "split": "train",
+          "num_rows_total": 73907,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "default",
+          "split": "test",
+          "num_rows_total": 8211,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca-7b",
+          "split": "train",
+          "num_rows_total": 27393,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca-7b",
+          "split": "test",
+          "num_rows_total": 3036,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca2-7b",
+          "split": "train",
+          "num_rows_total": 25564,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca2-7b",
+          "split": "test",
+          "num_rows_total": 2848,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca3-8b",
+          "split": "train",
+          "num_rows_total": 20950,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        },
+        {
+          "config": "alpaca3-8b",
+          "split": "test",
+          "num_rows_total": 2327,
+          "features": [
+            {
+              "feature_idx": 0,
+              "name": "prompt",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 1,
+              "name": "response_0",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 2,
+              "name": "response_1",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 3,
+              "name": "prompt_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 4,
+              "name": "response_0_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 5,
+              "name": "response_1_source",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 6,
+              "name": "is_response_0_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 7,
+              "name": "is_response_1_safe",
+              "type": {
+                "dtype": "bool",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 8,
+              "name": "response_0_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 9,
+              "name": "response_1_harm_category",
+              "type": {
+                "Endangering National Security": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Insulting Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Discriminatory Behavior": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Endangering Public Health": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Copyright Issues": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Violence": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Drugs": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Privacy Violation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Economic Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Mental Manipulation": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Human Trafficking": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Physical Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Sexual Content": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Cybercrime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Disrupting Public Order": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Environmental Damage": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Psychological Harm": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "White-Collar Crime": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                },
+                "Animal Abuse": {
+                  "dtype": "bool",
+                  "_type": "Value"
+                }
+              }
+            },
+            {
+              "feature_idx": 10,
+              "name": "response_0_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 11,
+              "name": "response_1_severity_level",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 12,
+              "name": "better_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 13,
+              "name": "safer_response_id",
+              "type": {
+                "dtype": "int64",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 14,
+              "name": "response_0_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            },
+            {
+              "feature_idx": 15,
+              "name": "response_1_sha256",
+              "type": {
+                "dtype": "string",
+                "_type": "Value"
+              }
+            }
+          ],
+          "sampled_rows": 3
+        }
+      ],
+      "declared_dataset_info": null,
+      "declared_configs": [
+        {
+          "config_name": "default",
+          "data_files": [
+            {
+              "split": "train",
+              "path": [
+                "data/Alpaca-7B/train.jsonl",
+                "data/Alpaca2-7B/train.jsonl",
+                "data/Alpaca3-8B/train.jsonl"
+              ]
+            },
+            {
+              "split": "test",
+              "path": [
+                "data/Alpaca-7B/test.jsonl",
+                "data/Alpaca2-7B/test.jsonl",
+                "data/Alpaca3-8B/test.jsonl"
+              ]
+            }
+          ]
+        },
+        {
+          "config_name": "alpaca-7b",
+          "data_files": [
+            {
+              "split": "train",
+              "path": [
+                "data/Alpaca-7B/train.jsonl"
+              ]
+            },
+            {
+              "split": "test",
+              "path": [
+                "data/Alpaca-7B/test.jsonl"
+              ]
+            }
+          ]
+        },
+        {
+          "config_name": "alpaca2-7b",
+          "data_files": [
+            {
+              "split": "train",
+              "path": [
+                "data/Alpaca2-7B/train.jsonl"
+              ]
+            },
+            {
+              "split": "test",
+              "path": [
+                "data/Alpaca2-7B/test.jsonl"
+              ]
+            }
+          ]
+        },
+        {
+          "config_name": "alpaca3-8b",
+          "data_files": [
+            {
+              "split": "train",
+              "path": [
+                "data/Alpaca3-8B/train.jsonl"
+              ]
+            },
+            {
+              "split": "test",
+              "path": [
+                "data/Alpaca3-8B/test.jsonl"
+              ]
+            }
+          ]
+        }
+      ],
+      "license": "cc-by-nc-4.0",
+      "parquet_footers": [],
+      "viewer_revision_note": "Viewer conversion sampled at inspection time; not guaranteed pinned to repository SHA.",
+      "task_artifact_paths": [],
+      "errors": []
+    }
+  ],
+  "note": "Schema inspection only. First-row samples are not representative. Viewer exports are not SHA-pinned; source files/cards use recorded revisions."
+}
