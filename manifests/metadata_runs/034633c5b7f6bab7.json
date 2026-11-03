@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "metadata_snapshot": {
+    "artifacts": [
+      {
+        "bytes": 2174956,
+        "path": "models.jsonl.gz",
+        "sha256": "dc2e171eec4fef86d6404107bdc2aaaf30526a16f599140d861b97f83301403e"
+      },
+      {
+        "bytes": 4020122,
+        "path": "models.tsv",
+        "sha256": "8cb5c276c78f3bf6e4a34369b3e4d48213f1269a51755895335ed52eb3898711"
+      }
+    ],
+    "endpoint": "https://huggingface.co/api/models",
+    "finished_at": "2026-10-29T02:15:13.678867+00:00",
+    "query": {
+      "cardData": "true",
+      "direction": -1,
+      "filter": "text-generation",
+      "full": "true",
+      "limit": 100,
+      "sort": "downloads"
+    },
+    "record_count": 5000,
+    "requested_records": 5000,
+    "schema_version": "1.0.0",
+    "selection_note": "Top-download text-generation slice, not a representative sample. API pagination is not an atomic Hub snapshot. Record SHAs pin observed model revisions; metadata itself is captured here.",
+    "started_at": "2026-10-29T02:14:54.432056+00:00",
+    "status": "frozen"
+  },
+  "snapshot_id": "034633c5b7f6bab709eea6b107082683c5e8518d46d64159f3134c50ee0cbc59",
+  "local_snapshot": "data/raw/metadata/20261029T021454Z",
+  "local_evidence": "report/metadata_pipeline/20261029_021529_26936",
+  "validation": {
+    "status": "passed",
+    "checks": [
+      "captured_file_checksums",
+      "edge_contracts",
+      "exact_source_edge_reference",
+      "snapshot_identity",
+      "counts_and_external_parents",
+      "weak_component_reference",
+      "hive_spark_count_agreement",
+      "hive_relation_counts_and_top_hubs"
+    ],
+    "summary": {
+      "snapshot_id": "034633c5b7f6bab709eea6b107082683c5e8518d46d64159f3134c50ee0cbc59",
+      "sampled_models": 5000,
+      "typed_edges": 3554,
+      "simple_edges": 3554,
+      "vertices": 6126,
+      "external_parent_vertices": 1126,
+      "weak_components": 2620,
+      "models_with_valid_lineage": 3381,
+      "models_without_declared_lineage": 1607,
+      "rejected_parent_entries": 12,
+      "spark_master": "yarn",
+      "spark_application_id": "application_1793236538558_0016"
+    },
+    "relation_counts": {
+      "other": 2749,
+      "quantization": 705,
+      "fine_tune": 79,
+      "merge": 19,
+      "adapter": 2
+    },
+    "source_status_counts": {
+      "valid": 3554,
+      "no_lineage": 1607,
+      "rejected": 12
+    }
+  },
+  "hdfs_root": "/data/llm_risk_topology/metadata/034633c5b7f6bab709eea6b107082683c5e8518d46d64159f3134c50ee0cbc59/20261029_021529_26936",
+  "stage_timings": [
+    {
+      "stage": "hdfs_health",
+      "seconds": "2",
+      "status": "PASS"
+    },
+    {
+      "stage": "hdfs_upload",
+      "seconds": "4",
+      "status": "PASS"
+    },
+    {
+      "stage": "pig_extract",
+      "seconds": "28",
+      "status": "PASS"
+    },
+    {
+      "stage": "spark_graphx",
+      "seconds": "90",
+      "status": "PASS"
+    },
+    {
+      "stage": "hive_queries",
+      "seconds": "143",
+      "status": "PASS"
+    }
+  ]
+}

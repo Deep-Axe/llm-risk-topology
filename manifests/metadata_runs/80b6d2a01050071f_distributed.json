@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0.0",
+  "metadata_snapshot": {
+    "artifacts": [
+      {
+        "bytes": 516247,
+        "path": "models.jsonl.gz",
+        "sha256": "ee36004b3c671717c2e28e719b5099d5757ba5e6e2d15f49918608a25c9ae16e"
+      },
+      {
+        "bytes": 1168364,
+        "path": "models.tsv",
+        "sha256": "5a0822eaf0f290a54345feaee3a2ac7a0729c5961456451de637a010d3cf33ce"
+      }
+    ],
+    "endpoint": "https://huggingface.co/api/models",
+    "finished_at": "2026-10-29T02:07:52.340489+00:00",
+    "query": {
+      "cardData": "true",
+      "direction": -1,
+      "filter": "text-generation",
+      "full": "true",
+      "limit": 100,
+      "sort": "downloads"
+    },
+    "record_count": 1000,
+    "requested_records": 1000,
+    "schema_version": "1.0.0",
+    "selection_note": "Top-download text-generation slice, not a representative sample. API pagination is not an atomic Hub snapshot. Record SHAs pin observed model revisions; metadata itself is captured here.",
+    "started_at": "2026-10-29T02:07:48.175292+00:00",
+    "status": "frozen"
+  },
+  "snapshot_id": "80b6d2a01050071f8ceb82cea27d870ac8ff7f8379538801c30ce5b24cc226f5",
+  "local_snapshot": "data/raw/metadata/20261029T020748Z",
+  "local_evidence": "report/metadata_pipeline/20261029_035209_33874",
+  "validation": {
+    "status": "passed",
+    "verification_engine": "spark_distributed",
+    "checks": [
+      "captured_file_checksums",
+      "edge_contracts",
+      "exact_source_edge_reference",
+      "snapshot_identity",
+      "counts_and_external_parents",
+      "weak_component_reference",
+      "hive_spark_count_agreement",
+      "hive_relation_counts_and_top_hubs"
+    ],
+    "summary": {
+      "snapshot_id": "80b6d2a01050071f8ceb82cea27d870ac8ff7f8379538801c30ce5b24cc226f5",
+      "sampled_models": 1000,
+      "typed_edges": 633,
+      "simple_edges": 633,
+      "vertices": 1197,
+      "external_parent_vertices": 197,
+      "weak_components": 569,
+      "models_with_valid_lineage": 613,
+      "models_without_declared_lineage": 385,
+      "rejected_parent_entries": 2,
+      "spark_master": "yarn",
+      "spark_application_id": "application_1793236538558_0025"
+    },
+    "relation_counts": {
+      "other": 524,
+      "quantization": 92,
+      "fine_tune": 17
+    },
+    "distributed_checks": {
+      "passed": true,
+      "missing_edges": 0,
+      "unexpected_edges": 0,
+      "invalid_contracts": 0,
+      "expected_edges": 633,
+      "models_without_declared_lineage": 385,
+      "rejected_parent_entries": 2,
+      "models_with_valid_lineage": 613,
+      "weak_components": 569,
+      "vertices": 1197,
+      "external_parent_vertices": 197
+    }
+  },
+  "hdfs_root": "/data/llm_risk_topology/metadata/80b6d2a01050071f8ceb82cea27d870ac8ff7f8379538801c30ce5b24cc226f5/20261029_035209_33874",
+  "stage_timings": [
+    {
+      "stage": "hdfs_health",
+      "seconds": "3",
+      "status": "PASS"
+    },
+    {
+      "stage": "hdfs_upload",
+      "seconds": "4",
+      "status": "PASS"
+    },
+    {
+      "stage": "pig_extract",
+      "seconds": "48",
+      "status": "PASS"
+    },
+    {
+      "stage": "spark_graphx",
+      "seconds": "147",
+      "status": "PASS"
+    },
+    {
+      "stage": "hive_queries",
+      "seconds": "205",
+      "status": "PASS"
+    }
+  ],
+  "resources": {
+    "sampling_seconds": 2,
+    "scope": "WSL system and all Java processes, including pre-existing services; not isolated job memory",
+    "samples": 215,
+    "baseline": {
+      "unix_time": 1793245930.1726408,
+      "available_kib": 4936940,
+      "used_kib": 2884568,
+      "swap_used_kib": 0,
+      "all_java_rss_kib": 2352660
+    },
+    "minimum_available_kib": 2471664,
+    "maximum_used_kib": 5349844,
+    "maximum_java_rss_kib": 4848116,
+    "maximum_swap_used_kib": 0
+  },
+  "comparison_to_5k": {
+    "baseline_snapshot_id": "034633c5b7f6bab709eea6b107082683c5e8518d46d64159f3134c50ee0cbc59",
+    "sampled_models": {
+      "baseline": 5000,
+      "current": 1000
+    },
+    "lineage_coverage": {
+      "baseline": 0.6762,
+      "current": 0.613
+    },
+    "rejected_parent_entries": {
+      "baseline": 12,
+      "current": 2
+    },
+    "stage_seconds": {
+      "hdfs_health": {
+        "baseline": 2,
+        "current": 3
+      },
+      "hdfs_upload": {
+        "baseline": 4,
+        "current": 4
+      },
+      "pig_extract": {
+        "baseline": 28,
+        "current": 48
+      },
+      "spark_graphx": {
+        "baseline": 90,
+        "current": 147
+      },
+      "hive_queries": {
+        "baseline": 143,
+        "current": 205
+      }
+    },
+    "memory_note": "No measured memory baseline exists for the original 5k run. Current resource samples include existing WSL services. No memory ratio is inferred.",
+    "runtime_note": "Current Spark timings include distributed reference verification; original 5k Spark timings did not."
+  }
+}
