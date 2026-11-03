@@ -62,7 +62,7 @@ def prepare(output, revision):
     runner = runner.replace("CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{revision}'")
     (kernel / 'runner.py').write_text(runner, encoding='utf-8', newline='\n')
     atomic_write(kernel / 'kernel-metadata.json', {
-        'id': 'deepax/llm-risk-topology-pilot', 'title': 'LLM Risk Topology two-model pilot',
+        'id': 'deepax/llm-risk-topology-two-model-pilot', 'title': 'LLM Risk Topology two-model pilot',
         'code_file': 'runner.py', 'language': 'python', 'kernel_type': 'script', 'is_private': True,
         'enable_gpu': True, 'enable_internet': True, 'machine_shape': 'NvidiaTeslaT4',
         'dataset_sources': ['deepax/llm-risk-topology-pilot-v5'],

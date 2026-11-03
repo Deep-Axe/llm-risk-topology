@@ -14,6 +14,25 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class KagglePayloadTest(unittest.TestCase):
+    def test_secret_lookup_accepts_the_existing_mixed_case_label(self):
+        def secret(name):
+            if name != 'HF_Token':
+                raise KeyError(name)
+            return 'synthetic-token'
+        value, source = RUNNER.read_hf_token({}, secret)
+        self.assertEqual(value, 'synthetic-token')
+        self.assertEqual(source, 'Kaggle secret:HF_Token')
+
+    def test_secret_lookup_accepts_big_data_project_and_environment(self):
+        secret = lambda name: 'synthetic-token' if name == 'big_data_project' else None
+        self.assertEqual(RUNNER.read_hf_token({}, secret)[1], 'Kaggle secret:big_data_project')
+        self.assertEqual(RUNNER.read_hf_token({'HF_TOKEN': 'env-token'}, secret),
+                         ('env-token', 'environment:HF_TOKEN'))
+
+    def test_missing_secret_error_does_not_include_a_token(self):
+        with self.assertRaisesRegex(ValueError, 'Enable HF_TOKEN'):
+            RUNNER.read_hf_token({}, lambda name: None)
+
     def payload(self, dataset, name='data/processed/prompts/pilot_v5/example.json'):
         archive = dataset / 'pilot_v5.zip'
         with zipfile.ZipFile(archive, 'w') as stream:
