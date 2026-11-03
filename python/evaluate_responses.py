@@ -80,7 +80,8 @@ def evaluate(run_folder, labeler, backend=None, batch_size=16):
         policy = {'labeler_id': labeler, 'labeler_revision': revision,
                   'parser_version': 'wildguard-three-lines-v1',
                   'instruction_sha256': digest(WILDGUARD_FORMAT) if labeler == 'wildguard' else None,
-                  'runtime': backend.configuration if backend else None, 'generation': settings}
+                  'runtime': {**backend.configuration, 'batch_size': batch_size} if backend else None,
+                  'generation': settings}
         if (folder / 'labeler.json').exists() and read_json(folder / 'labeler.json') != policy:
             raise ValueError('Labeling configuration changed; use a separately versioned evaluator')
         atomic_write(folder / 'labeler.json', policy)
@@ -136,7 +137,8 @@ def evaluate(run_folder, labeler, backend=None, batch_size=16):
         atomic_write(folder / 'validation.bundle.json', bundle)
         stats = {'labeler_id': labeler, 'labeler_revision': revision, 'labels': len(store.rows),
                  'errors': sum(row['error'] is not None for row in store.rows.values()),
-                 'new_labels': len(pending), 'wall_seconds_this_attempt': time.perf_counter() - started,
+                 'new_labels': len(pending), 'batch_size': batch_size,
+                 'wall_seconds_this_attempt': time.perf_counter() - started,
                  'engine': backend.engine if backend else 'python_rules',
                  'engine_version': backend.engine_version if backend else platform_python_version()}
         atomic_write(folder / 'stats.json', stats)
