@@ -76,6 +76,8 @@ class WildGuardHandoffTest(unittest.TestCase):
             self.assertEqual(sum('--labeler' in c for c in commands), 2)
             self.assertTrue(all(c[c.index('--labeler') + 1] == 'wildguard'
                                 for c in commands if '--labeler' in c))
+            self.assertTrue(all(c[c.index('--batch-size') + 1] == '64'
+                                for c in commands if '--labeler' in c))
             self.assertFalse(any('python/generate_responses.py' in c for c in commands))
             self.assertEqual(commands[-1][1], 'audit')
 

@@ -18,7 +18,8 @@ def prepare(output, revision, owner, models=None, splits=None):
                   ['model_manifests'][0]['models']]
     config = {'models': registered if models is None else models,
               'splits': ['validation'] if splits is None else splits,
-              'model_manifest': 'manifests/models/scale6.bundle.json'}
+              'model_manifest': 'manifests/models/scale6.bundle.json',
+              'assistant_batch_size': 64, 'wildguard_batch_size': 64}
     if (config['splits'] != ['validation'] or len(config['models']) != len(set(config['models'])) or
             not set(config['models']).issubset(registered)):
         raise ValueError('Use registered models and the validation split')
@@ -35,7 +36,8 @@ def prepare(output, revision, owner, models=None, splits=None):
                 'Notebook input: deepamahuja/llm-risk-topology-two-model-pilot (v7 outputs).\n',
                 'Refresh the Notebook input to version 7 after its outputs are published.\n',
                 'Reuses Mistral and Zephyr; generates six validation-only assistants, then labels all eight.\n',
-                'Greedy decoding, seed 42, fp16, batch 16, context 4096, output limit 512 are fixed.\n',
+                'Greedy decoding, seed 42, fp16, batch 64, context 4096, output limit 512 are fixed.\n',
+                'WildGuard labeling also uses batches of 64.\n',
                 'A checkpoint archive and per-model reports are saved after every completed model.\n']},
             {'cell_type': 'code', 'id': 'scale-parameters', 'metadata': {'tags': ['parameters']},
              'execution_count': None, 'outputs': [], 'source': [
