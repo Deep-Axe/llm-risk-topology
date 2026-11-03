@@ -1,6 +1,6 @@
 {
   "plan_id": "pilot_v5_layer2_v1",
-  "registered": "2026-11-04T02:30+05:30",
+  "registered": "2026-11-04T01:40+05:30 (time of commit 6813131 on origin/main; the commit time is authoritative)",
   "status": "frozen before any Kaggle (7B/8B) responses or labels were inspected",
   "already_seen_before_registration": [
     "Qwen/Qwen2.5-0.5B-Instruct validation responses with refusal_rules labels (laptop run c329cc53cfe58b65) and the exploratory analysis on them (round 2, Agent B)"
@@ -32,13 +32,13 @@
   "protocol": {
     "confirmatory_within_pilot": "For models with a development split: choose (k, score) by 5-fold GroupKFold cross-validated PR-AUC within development only; fit B0 and B1 on all development pairs; score validation once.",
     "exploratory": "Validation-only models: 5-fold GroupKFold out-of-fold predictions on validation groups, with (k, score) fixed to the choice made on Mistral/Zephyr development data. Reported as exploratory.",
-    "primary_estimand": "Pooled validation ΔPR-AUC = PR-AUC(B1) - PR-AUC(B0) over Mistral-7B-Instruct-v0.1 and Zephyr-7B-beta pairs",
+    "primary_estimand": "Pooled validation Î”PR-AUC = PR-AUC(B1) - PR-AUC(B0) over Mistral-7B-Instruct-v0.1 and Zephyr-7B-beta pairs",
     "interval": "95% percentile bootstrap over prompt groups (2,000 draws); a resampled group keeps all its pairs for every model",
-    "supporting_metrics": ["flip prevalence", "AUROC", "Brier score", "per-model and per-source ΔPR-AUC"]
+    "supporting_metrics": ["flip prevalence", "AUROC", "Brier score", "per-model and per-source Î”PR-AUC"]
   },
   "interpretation": {
-    "positive_signal": "lower 95% bound of pooled ΔPR-AUC above 0",
-    "status": "Pilot evidence only. The confirmatory test is the 8-model test-split evaluation under decisions.md Section 8 (lower bound > 0 on at least 300 clean test pair groups; positive Δ in at least 6 of 8 checkpoints and 2 of 3 families).",
+    "positive_signal": "lower 95% bound of pooled Î”PR-AUC above 0",
+    "status": "Pilot evidence only. The confirmatory test is the 8-model test-split evaluation under decisions.md Section 8 (lower bound > 0 on at least 300 clean test pair groups; positive Î” in at least 6 of 8 checkpoints and 2 of 3 families).",
     "null_or_negative_results": "reported with the same prominence"
   },
   "sensitivity_analyses": [
