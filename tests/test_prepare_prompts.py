@@ -2,11 +2,14 @@ import io
 import json
 from pathlib import Path
 import sys
+import csv
+import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'python'))
-from prepare_prompts import prepare, json_records
-from data_contracts import canonical, validate_bundle
+from prepare_prompts import (prepare, json_records, sample_wild_file, extend_prepared,
+                             near_matches, load_prepared, word_grams, containment)
+from data_contracts import canonical, validate_bundle, digest
 
 
 def source(name, rows, config='train'):
@@ -74,6 +77,130 @@ class PromptPreparationTest(unittest.TestCase):
         self.assertEqual(len(prompts), 4)
         self.assertEqual(len(splits), 1)
         self.assertEqual(quality['salad_qids_with_multiple_base_texts'], 1)
+
+    def test_adversarial_intent_rows_keep_parents_and_exclude_completions(self):
+        rows = [{'vanilla': 'A direct request', 'adversarial': 'A rewritten request',
+                 'data_type': kind, 'completion': 'STORED RESPONSE'}
+                for kind in ['adversarial_harmful', 'adversarial_benign']]
+        result = prepare([source('allenai/wildjailbreak', rows)])
+        self.assertEqual(len(result[1]), 2)
+        intents = {alias['source_labels']['prompt_intent'] for alias in result[2]}
+        self.assertEqual(intents, {'harmful', 'unharmful'})
+        self.assertNotIn('STORED RESPONSE', canonical(result))
+
+    def test_full_file_sampling_matches_hash_rank_and_repeats(self):
+        rows = [{'vanilla': f'Original {i}', 'adversarial': f'Variant {i}',
+                 'data_type': kind, 'completion': 'STORED RESPONSE'}
+                for kind in ['vanilla_harmful', 'adversarial_harmful', 'adversarial_benign']
+                for i in range(9)]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / 'train.tsv'
+            with path.open('w', encoding='utf-8', newline='') as stream:
+                writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter='\t')
+                writer.writeheader()
+                writer.writerows(rows)
+            spec = source('allenai/wildjailbreak', [])
+            first, audit = sample_wild_file(path, spec, per_intent=3, seed=42)
+            second, repeated = sample_wild_file(path, spec, per_intent=3, seed=42)
+        expected = []
+        for kind in ['adversarial_harmful', 'adversarial_benign']:
+            eligible = [i for i, row in enumerate(rows) if row['data_type'] == kind]
+            expected.extend(sorted(eligible, key=lambda i: digest([42, 'a' * 40, 'wild-row', i]))[:3])
+        self.assertEqual([r['row_index'] for r in first['rows']], sorted(expected))
+        self.assertEqual((first, audit), (second, repeated))
+        self.assertEqual(audit['file_row_counts']['adversarial_benign'], 9)
+        self.assertNotIn('STORED RESPONSE', canonical(first))
+
+    def test_near_duplicate_joins_frozen_group_without_changing_it(self):
+        text = 'alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu'
+        base = prepare([source('allenai/wildjailbreak', [
+            {'vanilla': text, 'adversarial': '', 'data_type': 'vanilla_benign'}])])
+        new = source('allenai/wildjailbreak', [
+            {'vanilla': text + ' nu', 'adversarial': 'A separate rewritten version',
+             'data_type': 'adversarial_benign'}])
+        new['rows'][0]['row_index'] = 20
+        result = extend_prepared(base, [new])
+        lookup = {p['prompt_id']: p for p in result[0]}
+        self.assertEqual(lookup[base[0][0]['prompt_id']], base[0][0])
+        self.assertEqual(result[3], base[3])
+        self.assertEqual(len({p['prompt_group_id'] for p in result[0]}), 1)
+        self.assertEqual(len(result[4]['near_duplicate_audit']['merges']), 1)
+        validate_bundle({'prompts': result[0]})
+
+    def test_new_near_groups_share_anchor_and_split(self):
+        text = 'alpha beta gamma delta epsilon zeta eta theta iota kappa lambda mu'
+        new = source('allenai/wildjailbreak', [
+            {'vanilla': text, 'adversarial': 'First rewritten version', 'data_type': 'adversarial_benign'},
+            {'vanilla': text + ' nu', 'adversarial': 'Second rewritten version',
+             'data_type': 'adversarial_benign'}])
+        result = extend_prepared(prepare([]), [new])
+        self.assertEqual(len(result[0]), 4)
+        self.assertEqual(len(result[3]), 1)
+        self.assertEqual(result[4]['near_duplicate_audit']['final_cross_split_question_matches'], 0)
+
+    def test_new_bridge_between_frozen_groups_is_excluded(self):
+        left = 'alpha beta gamma delta epsilon zeta eta theta iota'
+        right = 'one two three four five six seven eight nine ten'
+        base = prepare([source('allenai/wildjailbreak', [
+            {'vanilla': text, 'adversarial': '', 'data_type': 'vanilla_benign'}
+            for text in [left, right]])])
+        new = source('allenai/wildjailbreak', [
+            {'vanilla': left + ' ' + right, 'adversarial': 'A rewritten bridge',
+             'data_type': 'adversarial_benign'}])
+        new['rows'][0]['row_index'] = 20
+        result = extend_prepared(base, [new])
+        self.assertEqual(result[0], base[0])
+        self.assertEqual(result[3], base[3])
+        self.assertEqual(len(result[4]['near_duplicate_audit']['excluded_bridge_components']), 1)
+
+    def test_shared_variant_template_does_not_merge_different_questions(self):
+        wrapper = ' '.join(f'wrapper{i}' for i in range(65))
+        inputs = [source('allenai/wildjailbreak', [
+            {'vanilla': core, 'adversarial': wrapper + ' ' + core, 'data_type': 'adversarial_benign'}
+            for core in ['alpha beta gamma delta epsilon zeta eta theta iota',
+                         'one two three four five six seven eight nine']])]
+        result = extend_prepared(prepare([]), inputs)
+        hits = near_matches(result[0], result[1])
+        self.assertTrue(any(hit['template_only'] for hit in hits))
+        self.assertEqual(len(result[3]), 2)
+
+    def test_containment_is_symmetric_shorter_text_fraction(self):
+        short = word_grams('one two three four five six seven eight nine')
+        long = word_grams('prefix one two three four five six seven eight nine suffix')
+        self.assertEqual(containment(short, long), 1)
+        self.assertEqual(containment(long, short), 1)
+
+    def test_frozen_v4_saved_input_replays_byte_for_byte(self):
+        folder = Path(__file__).resolve().parents[1] / 'data/processed/prompts/pilot_v4'
+        if not folder.exists():
+            self.skipTest('Frozen local pilot_v4 data is required for the replay check')
+        inputs = json.loads((folder / 'inputs.json').read_text(encoding='utf-8'))
+        records = prepare(inputs, seed=42, maximum=2500)[0]
+        replay = ''.join(canonical(row) + '\n' for row in records).encode('utf-8')
+        self.assertEqual(replay, (folder / 'prompts.jsonl').read_bytes())
+
+    def test_real_v5_preserves_v4_and_meets_test_group_targets(self):
+        folder = Path(__file__).resolve().parents[1] / 'data/processed/prompts'
+        if not (folder / 'pilot_v5/experiment.bundle.json').exists():
+            self.skipTest('Frozen local pilot_v5 data is required for the extension check')
+        old = load_prepared(folder / 'pilot_v4')
+        new = load_prepared(folder / 'pilot_v5')
+        lookup = {p['prompt_id']: p for p in new[0]}
+        for row in old[0]:
+            self.assertEqual(lookup[row['prompt_id']], row)
+        for group, split in old[3].items():
+            self.assertEqual(new[3][group], split)
+        test_groups = {lookup[p['original_prompt_id']]['prompt_group_id'] for p in new[1]
+                       if new[3][lookup[p['original_prompt_id']]['prompt_group_id']] == 'test'}
+        benign_ids = {a['canonical_prompt_id'] for a in new[2]
+                      if a['source_labels'].get('prompt_intent') == 'unharmful'}
+        benign_test = {lookup[p['original_prompt_id']]['prompt_group_id'] for p in new[1]
+                       if p['original_prompt_id'] in benign_ids and
+                       new[3][lookup[p['original_prompt_id']]['prompt_group_id']] == 'test'}
+        self.assertLessEqual(len(new[0]), 6000)
+        self.assertGreaterEqual(len(test_groups), 300)
+        self.assertGreaterEqual(len(benign_test), 100)
+        validate_bundle({'prompts': new[0]})
 
 
 if __name__ == '__main__':
