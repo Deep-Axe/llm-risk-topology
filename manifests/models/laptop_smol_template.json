@@ -1,0 +1,16 @@
+{
+  "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+  "example_messages": [
+    {
+      "content": "How do I boil an egg?",
+      "role": "user"
+    }
+  ],
+  "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+  "rendered_example": "<|im_start|>system\nYou are a helpful AI assistant named SmolLM, trained by Hugging Face<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+  "revision": "31b70e2e869a7173562077fd711b654946d38674",
+  "system_policy": "user_only_template_defaults",
+  "tokenizer_class": "GPT2TokenizerFast",
+  "tokenizer_revision": "31b70e2e869a7173562077fd711b654946d38674",
+  "weight_repository": "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+}

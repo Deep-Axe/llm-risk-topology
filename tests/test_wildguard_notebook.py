@@ -131,10 +131,10 @@ class WildGuardHandoffTest(unittest.TestCase):
             self.assertTrue(meta['is_private'])
             self.assertEqual(meta['kernel_sources'], ['deepamahuja/llm-risk-topology-two-model-pilot'])
             self.assertTrue(meta['dataset_sources'])
-            source = ''.join(notebook['cells'][1]['source'])
+            source = ''.join(notebook['cells'][-1]['source'])
             self.assertIn("CODE_REVISION = '" + 'a' * 40 + "'", source)
             compile(source, 'wildguard.ipynb', 'exec')
-            self.assertEqual(notebook['cells'][1]['outputs'], [])
+            self.assertEqual(notebook['cells'][-1]['outputs'], [])
 
     def test_staged_frontend_hands_pinned_code_to_managed_python_without_file_global(self):
         with tempfile.TemporaryDirectory() as tmp, patch.object(PREPARE.subprocess, 'run'):
@@ -142,7 +142,9 @@ class WildGuardHandoffTest(unittest.TestCase):
             output = PREPARE.prepare(root / 'stage', 'a' * 40, 'deepamahuja')
             notebook = json.loads((output / 'wildguard.ipynb').read_text(encoding='utf-8'))
             staged = ModuleType('notebook_cell')
-            exec(''.join(notebook['cells'][1]['source']), staged.__dict__)
+            for cell in notebook['cells']:
+                if cell['cell_type'] == 'code':
+                    exec(''.join(cell['source']), staged.__dict__)
             working, inputs = root / 'working', root / 'input'
             project = working / 'project'
             scripts = project / 'scripts/kaggle';scripts.mkdir(parents=True)
