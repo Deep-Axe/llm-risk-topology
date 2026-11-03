@@ -277,18 +277,76 @@ def variant_grams(texts, n=8):
     return collected
 
 
+def template_fold_mask(scored, n_splits=5):
+    """Drop test-fold pairs that share an 8-gram with a training-fold variant.
+
+    Returns None when no training fold has an 8-gram to compare against.
+    """
+    from sklearn.model_selection import GroupKFold
+    groups = scored['group_id'].to_numpy()
+    n_groups = len(pd.unique(groups))
+    if n_groups < 2:
+        return None
+    grams = variant_grams(scored['variant_prompt_text'])
+    splitter = GroupKFold(n_splits=min(n_splits, n_groups))
+    dummy = np.zeros(len(scored))
+    keep = np.ones(len(scored), dtype=bool)
+    comparable = False
+    for train_at, test_at in splitter.split(dummy, groups, groups):
+        blocked = set()
+        for index in train_at:
+            blocked |= grams[index]
+        if not blocked:
+            continue
+        comparable = True
+        for index in test_at:
+            if grams[index] and not grams[index].isdisjoint(blocked):
+                keep[index] = False
+    if not comparable:
+        return None
+    return keep
+
+
+def template_summary(scored, paired, baseline_score, full_score, n_boot, seed):
+    """Development variants are the reference when they exist. Otherwise each CV fold is."""
+    development = paired['split'].eq('development')
+    if int(development.sum()) > 0:
+        training = paired.loc[development, ['group_id', 'variant_prompt_text']]
+        mask = template_keep_mask(scored, training)
+        if mask is None or not any(variant_grams(training['variant_prompt_text'])):
+            return {'status': 'n/a', 'reason': 'no development 8-grams'}
+    else:
+        mask = template_fold_mask(scored)
+        if mask is None:
+            return {'status': 'n/a', 'reason': 'no training-fold 8-grams'}
+    kept = int(mask.sum())
+    dropped = int((~mask).sum())
+    summary = {'status': 'compared', 'n_kept': kept, 'n_dropped': dropped, 'n_pairs': kept}
+    if dropped == 0:
+        summary['delta_pr_auc'] = None
+        summary['note'] = 'no shared templates with the training variants'
+        return summary
+    if kept >= 20 and scored.loc[mask, 'refusal_flip'].nunique() > 1:
+        block = metric_block(
+            scored.loc[mask, 'refusal_flip'].astype(int),
+            baseline_score[mask], full_score[mask], scored.loc[mask, 'group_id'], n_boot, seed,
+        )
+        summary.update(block)
+    return summary
+
+
 def template_keep_mask(scored, training):
     """Keep pairs whose variant shares no word 8-gram with another group's training variant."""
     blocked = {}
     for group, grams in zip(training['group_id'], variant_grams(training['variant_prompt_text'])):
         blocked.setdefault(group, set()).update(grams)
-    all_grams = set()
-    for grams in blocked.values():
-        all_grams |= grams
     keep = []
     query_grams = variant_grams(scored['variant_prompt_text'])
     for group, grams in zip(scored['group_id'], query_grams):
-        others = all_grams - blocked.get(group, set())
+        others = set()
+        for other_group, other_grams in blocked.items():
+            if other_group != group:
+                others |= other_grams
         keep.append(not grams or grams.isdisjoint(others))
     return np.asarray(keep, dtype=bool)
 
@@ -309,11 +367,24 @@ def _num(value):
     return '%.3f' % number
 
 
-def write_tables(path, rows, confirmatory, exploratory, n_responses):
-    """Booktabs tables and headline macros. No package other than booktabs."""
+def _protocol_code(row):
+    label = 'WG' if row['label_source'] == 'wildguard' else 'rules'
+    protocol = 'dev' if row['protocol'] == 'development_then_validation' else 'cv'
+    return '%s/%s' % (label, protocol)
+
+
+def _flip_by(rows):
+    return '; '.join('%s %s' % (row['model'].split('/')[-1], _num(row['flip_rate'])) for row in rows)
+
+
+def write_tables(directory, rows, confirmatory, exploratory, n_responses):
+    """Three booktabs files. The lead wraps the tables in floats."""
+    from pathlib import Path
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
     flips = [row['flip_rate'] for row in rows]
     pooled = confirmatory if confirmatory is not None else exploratory
-    lines = [
+    numbers = [
         '\\newcommand{\\LtwoPooledDelta}{%s}' % _num(None if pooled is None else pooled['delta_pr_auc']),
         '\\newcommand{\\LtwoPooledLower}{%s}' % _num(None if pooled is None else pooled['delta_lower']),
         '\\newcommand{\\LtwoPooledUpper}{%s}' % _num(None if pooled is None else pooled['delta_upper']),
@@ -322,37 +393,42 @@ def write_tables(path, rows, confirmatory, exploratory, n_responses):
         '\\newcommand{\\LtwoResponses}{%d}' % int(n_responses),
         '\\newcommand{\\LtwoFlipMin}{%s}' % _num(min(flips) if flips else None),
         '\\newcommand{\\LtwoFlipMax}{%s}' % _num(max(flips) if flips else None),
+        '\\newcommand{\\LtwoFlipBy}{%s}' % _tex(_flip_by(rows)),
+        '\\newcommand{\\LtwoPrimaryModels}{Mistral-7B-Instruct-v0.1, Zephyr-7b-beta}',
         '',
-        '\\begin{tabular}{llllrrrrr}',
+    ]
+    (directory / 'layer2_numbers.tex').write_text('\n'.join(numbers), encoding='utf-8')
+    lines = [
+        '\\begin{tabular}{llrrrrl}',
         '\\toprule',
-        'Model & Family & Label & Protocol & Pairs & Flip & B0 & B1 & $\\Delta$ (95\\% CI) \\\\',
+        'Model & Code & Pairs & Flip & B0 & B1 & $\\Delta$ (95\\% CI) \\\\',
         '\\midrule',
     ]
     for row in rows:
-        lines.append('%s & %s & %s & %s & %d & %s & %s & %s & %s [%s, %s] \\\\' % (
-            _tex(row['model'].split('/')[-1]), _tex(row['family']), _tex(row['label_source']),
-            _tex(row['protocol']), row['n_pairs'], _num(row['flip_rate']),
+        lines.append('%s & %s & %d & %s & %s & %s & %s [%s, %s] \\\\' % (
+            _tex(row['model'].split('/')[-1]), _protocol_code(row), row['n_pairs'], _num(row['flip_rate']),
             _num(row['baseline_pr_auc']), _num(row['full_pr_auc']), _num(row['delta']),
             _num(row['lower']), _num(row['upper']),
         ))
     if confirmatory is not None:
         lines.append('\\midrule')
-        lines.append('Mistral + Zephyr &  &  & pre-registered & %d &  & %s & %s & %s [%s, %s] \\\\' % (
+        lines.append('Mistral + Zephyr & dev & %d &  & %s & %s & %s [%s, %s] \\\\' % (
             confirmatory['n_pairs'], _num(confirmatory['baseline_pr_auc']), _num(confirmatory['full_pr_auc']),
             _num(confirmatory['delta_pr_auc']), _num(confirmatory['delta_lower']), _num(confirmatory['delta_upper']),
         ))
     if exploratory is not None:
-        lines.append('All other models &  &  & exploratory & %d &  & %s & %s & %s [%s, %s] \\\\' % (
+        lines.append('All other models & cv & %d &  & %s & %s & %s [%s, %s] \\\\' % (
             exploratory['n_pairs'], _num(exploratory['baseline_pr_auc']), _num(exploratory['full_pr_auc']),
             _num(exploratory['delta_pr_auc']), _num(exploratory['delta_lower']), _num(exploratory['delta_upper']),
         ))
     lines.extend(['\\bottomrule', '\\end{tabular}', ''])
-    lines.extend([
-        '\\begin{tabular}{llr r}',
+    (directory / 'layer2_main_table.tex').write_text('\n'.join(lines), encoding='utf-8')
+    sens = [
+        '\\begin{tabular}{llrl}',
         '\\toprule',
         'Check & Model & Pairs & $\\Delta$ (95\\% CI) \\\\',
         '\\midrule',
-    ])
+    ]
     for row in rows:
         name = _tex(row['model'].split('/')[-1])
         for check, block in (
@@ -362,25 +438,38 @@ def write_tables(path, rows, confirmatory, exploratory, n_responses):
         ):
             if not block:
                 continue
-            lines.append('%s & %s & %s & %s [%s, %s] \\\\' % (
-                check, name, block.get('n_pairs', '---'), _num(block.get('delta', block.get('delta_pr_auc'))),
-                _num(block.get('lower', block.get('delta_lower'))), _num(block.get('upper', block.get('delta_upper'))),
-            ))
+            if block.get('status') == 'n/a':
+                sens.append('%s & %s & n/a & n/a \\\\' % (check, name))
+                continue
+            delta = block.get('delta', block.get('delta_pr_auc'))
+            lower = block.get('lower', block.get('delta_lower'))
+            upper = block.get('upper', block.get('delta_upper'))
+            if 'n_kept' in block:
+                pair_cell = '%d kept, %d dropped' % (block['n_kept'], block['n_dropped'])
+            else:
+                pair_cell = str(block.get('n_pairs', '---'))
+            if delta is None:
+                sens.append('%s & %s & %s & n/a \\\\' % (check, name, pair_cell))
+            else:
+                sens.append('%s & %s & %s & %s [%s, %s] \\\\' % (
+                    check, name, pair_cell, _num(delta), _num(lower), _num(upper),
+                ))
         for item in row.get('k_sensitivity') or []:
-            lines.append('k=%d & %s & %s & %s [%s, %s] \\\\' % (
+            sens.append('k=%d & %s & %s & %s [%s, %s] \\\\' % (
                 item['k'], name, item.get('n_pairs', '---'), _num(item['delta']),
                 _num(item['lower']), _num(item['upper']),
             ))
         harm = row.get('harmful_transition')
         if harm and harm.get('metrics'):
-            lines.append('harmful transition & %s & %d & %s [%s, %s] \\\\' % (
+            sens.append('harmful transition & %s & %d & %s [%s, %s] \\\\' % (
                 name, harm['n_pairs'], _num(harm['metrics']['delta_pr_auc']),
                 _num(harm['metrics']['delta_lower']), _num(harm['metrics']['delta_upper']),
             ))
-    lines.extend(['\\bottomrule', '\\end{tabular}', ''])
-    path = __import__('pathlib').Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text('\n'.join(lines), encoding='utf-8')
+    sens.extend(['\\bottomrule', '\\end{tabular}', ''])
+    (directory / 'layer2_sensitivity_table.tex').write_text('\n'.join(sens), encoding='utf-8')
+    old = directory / 'layer2_tables.tex'
+    if old.exists():
+        old.unlink()
 
 
 def pooled_metrics(model_results, n_boot, seed):

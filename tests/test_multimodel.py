@@ -107,6 +107,73 @@ class MultimodelTest(unittest.TestCase):
         training = paired.loc[paired['split'].eq('development'), ['group_id', 'variant_prompt_text']]
         mask = template_keep_mask(result['scored'], training)
         self.assertEqual(len(mask), 20)
+        self.assertFalse(bool(mask.any()))
+
+    def test_shared_template_is_visible_when_the_query_group_also_has_it(self):
+        text = 'alpha beta gamma delta epsilon zeta eta theta iota kappa'
+        scored = pd.DataFrame({
+            'group_id': ['a', 'b'],
+            'variant_prompt_text': [text + ' one', text + ' two'],
+        })
+        mask = template_keep_mask(scored, scored)
+        self.assertFalse(bool(mask.any()))
+
+    def test_short_validation_templates_are_not_applicable(self):
+        from multimodel import template_fold_mask, template_summary
+        scored = pd.DataFrame({
+            'group_id': ['a', 'b'],
+            'variant_prompt_text': ['bake a cake', 'boil an egg'],
+            'refusal_flip': [0, 1],
+        })
+        self.assertIsNone(template_fold_mask(scored))
+        paired = scored.assign(split='validation')
+        summary = template_summary(scored, paired, np.array([0.2, 0.4]), np.array([0.3, 0.5]), 0, 1)
+        self.assertEqual(summary['status'], 'n/a')
+        self.assertNotIn('delta_pr_auc', summary)
+
+    def test_fold_reports_dropped_pairs_without_copying_delta(self):
+        from multimodel import template_summary
+        stem = 'alpha beta gamma delta epsilon zeta eta theta iota kappa'
+        scored = pd.DataFrame({
+            'group_id': ['a', 'b'],
+            'variant_prompt_text': [stem + ' one', stem + ' two'],
+            'refusal_flip': [0, 1],
+        })
+        paired = scored.assign(split='validation')
+        summary = template_summary(scored, paired, np.array([0.2, 0.8]), np.array([0.3, 0.9]), 0, 1)
+        self.assertEqual(summary['status'], 'compared')
+        self.assertEqual(summary['n_dropped'], 2)
+        self.assertEqual(summary['n_kept'], 0)
+        self.assertIsNone(summary.get('delta_pr_auc'))
+
+    def test_tables_split_into_three_files(self):
+        import tempfile
+        from multimodel import write_tables
+        row = {
+            'model': 'Qwen/Qwen2.5-0.5B-Instruct', 'family': 'Qwen', 'label_source': 'refusal_rules',
+            'protocol': 'group_kfold_validation', 'n_pairs': 4, 'flip_rate': 0.5,
+            'baseline_pr_auc': 0.4, 'full_pr_auc': 0.5, 'delta': 0.1, 'lower': -0.1, 'upper': 0.2,
+            'template_held_out': {'status': 'n/a'},
+            'without_overlap': {'n_pairs': 3, 'delta_pr_auc': 0.05, 'delta_lower': -0.1, 'delta_upper': 0.1},
+            'k_sensitivity': [],
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            folder = Path(folder)
+            (folder / 'layer2_tables.tex').write_text('old', encoding='utf-8')
+            write_tables(folder, [row], None, {'n_pairs': 4, 'baseline_pr_auc': 0.4, 'full_pr_auc': 0.5,
+                                                'delta_pr_auc': 0.1, 'delta_lower': -0.1, 'delta_upper': 0.2}, 8)
+            numbers = (folder / 'layer2_numbers.tex').read_text(encoding='utf-8')
+            main = (folder / 'layer2_main_table.tex').read_text(encoding='utf-8')
+            sens = (folder / 'layer2_sensitivity_table.tex').read_text(encoding='utf-8')
+            self.assertIn('\\LtwoFlipBy', numbers)
+            self.assertIn('\\LtwoPrimaryModels', numbers)
+            self.assertIn('Mistral-7B-Instruct-v0.1, Zephyr-7b-beta', numbers)
+            header = [line for line in main.splitlines() if line.startswith('Model')][0]
+            self.assertEqual(header.count('&'), 6)
+            self.assertIn('rules/cv', main)
+            self.assertNotIn('Family', main)
+            self.assertIn('template held out & Qwen2.5-0.5B-Instruct & n/a & n/a', sens)
+            self.assertFalse((folder / 'layer2_tables.tex').exists())
 
 
 if __name__ == '__main__':

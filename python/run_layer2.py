@@ -235,7 +235,7 @@ def _summary_markdown(path, rows, pooled):
 def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_dir, summary_path,
                k_values, n_boot, seed):
     from multimodel import (
-        development_settings, family_size, pooled_metrics, score_model, template_keep_mask, write_tables,
+        development_settings, family_size, pooled_metrics, score_model, template_summary, write_tables,
     )
     from paired_outcomes import load_pair_table, outcomes_from_pairs, preferred_label
     frames = [pd.read_parquet(path) for path in flats]
@@ -274,21 +274,9 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
         exclusions = item['exclusions']
         prompt_embed = item['prompt_embed']
         result = score_model(paired, distance, k_values, n_boot, seed, fixed=fixed)
-        training = paired.loc[paired['split'].eq('development'), ['group_id', 'variant_prompt_text']]
-        if training.empty:
-            training = result['scored'][['group_id', 'variant_prompt_text']]
-        mask = template_keep_mask(result['scored'], training)
-        template_metrics = None
-        if int(mask.sum()) >= 20 and result['scored'].loc[mask, 'refusal_flip'].nunique() > 1:
-            template_metrics = metric_block(
-                result['scored'].loc[mask, 'refusal_flip'].astype(int),
-                result['baseline_score'][mask],
-                result['full_score'][mask],
-                result['scored'].loc[mask, 'group_id'],
-                n_boot,
-                seed,
-            )
-            template_metrics['n_pairs'] = int(mask.sum())
+        template_metrics = template_summary(
+            result['scored'], paired, result['baseline_score'], result['full_score'], n_boot, seed,
+        )
         keep = ~result['scored']['group_id'].isin(overlap)
         overlap_metrics = None
         if int(keep.sum()) >= 20 and result['scored'].loc[keep, 'refusal_flip'].nunique() > 1:
@@ -423,7 +411,7 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
     Path(results_path).write_text(json.dumps(payload, indent=2, default=str) + '\n', encoding='utf-8')
     _summary_markdown(Path(summary_path), model_rows, pooled)
     write_tables(
-        Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\paper\layer2_tables.tex'),
+        Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\paper'),
         model_rows, confirmatory, exploratory, len(frame),
     )
     print(json.dumps({'models': len(model_rows), 'pooled_delta': pooled['delta_pr_auc']}, indent=2))
