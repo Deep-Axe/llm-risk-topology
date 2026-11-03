@@ -150,7 +150,7 @@ def _save_figures(folder, paired, spectrum, labels, baseline, full, delta, lower
     axis.scatter(coords[refused, 0], coords[refused, 1], s=12, label='Refused', c='C1')
     axis.set_xlabel('Second eigenvector')
     axis.set_ylabel('Third eigenvector')
-    axis.set_title(f'Response map for {model_name}, colored by refusal')
+    axis.set_title(f'Spectral map of {model_name.split("/")[-1]} responses,\ncolored by refusal')
     axis.legend(frameon=False)
     fig.tight_layout()
     fig.savefig(folder / 'spectral_embedding.png', dpi=150)
@@ -178,7 +178,7 @@ def _save_figures(folder, paired, spectrum, labels, baseline, full, delta, lower
     axis.set_xlim(0, 1)
     axis.set_ylim(0, 1)
     axis.set_title(
-        'Validation precision-recall\nΔPR-AUC %.3f (95%% interval %.3f to %.3f)'
+        'Validation precision-recall\nÎ”PR-AUC %.3f (95%% interval %.3f to %.3f)'
         % (delta, lower, upper)
     )
     axis.legend(frameon=False)
