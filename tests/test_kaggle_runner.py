@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 PATH = Path(__file__).resolve().parents[1] / 'scripts/kaggle/runner.py'
@@ -14,6 +15,16 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class KagglePayloadTest(unittest.TestCase):
+    def test_python_environment_is_pinned_independently_of_the_kaggle_frontend(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(RUNNER.subprocess, 'run') as run:
+                result = RUNNER.create_inference_environment(Path(tmp))
+            commands = [call.args[0] for call in run.call_args_list]
+            self.assertIn('uv==' + RUNNER.UV_VERSION, commands[0])
+            self.assertEqual(commands[1][-3:], ['python', 'install', '3.11.14'])
+            self.assertIn('3.11.14', commands[2])
+            self.assertEqual(result, Path(tmp) / 'inference-env/bin/python')
+
     def test_secret_lookup_accepts_the_existing_mixed_case_label(self):
         def secret(name):
             if name != 'HF_Token':
