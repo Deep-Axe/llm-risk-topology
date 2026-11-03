@@ -1,0 +1,22 @@
+{
+  "model_manifests": [
+    {
+      "manifest_id": "models_c03c91bbea07c02d728e048cb7dbfc398aaa978ea84864825bcbc2d04cb4de66",
+      "models": [
+        {
+          "chat_template_sha256": "872be49dbb638044ad01b60388f48d469ff2980e5f0dccdc22ec907db54d0788",
+          "family": "SmolLM2",
+          "model_id": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+          "precision": "float16",
+          "revision": "31b70e2e869a7173562077fd711b654946d38674",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "31b70e2e869a7173562077fd711b654946d38674"
+        }
+      ],
+      "schema_version": "1.0.0",
+      "stage": "pilot",
+      "status": "frozen"
+    }
+  ]
+}
