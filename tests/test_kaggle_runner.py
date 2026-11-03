@@ -15,6 +15,11 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class KagglePayloadTest(unittest.TestCase):
+    def test_network_failure_is_reported_before_secret_lookup(self):
+        with patch.object(RUNNER.urllib.request, 'urlopen', side_effect=TimeoutError):
+            with self.assertRaisesRegex(RuntimeError, 'Outbound network'):
+                RUNNER.check_network()
+
     def test_python_environment_is_pinned_independently_of_the_kaggle_frontend(self):
         with tempfile.TemporaryDirectory() as tmp:
             with patch.object(RUNNER.subprocess, 'run') as run:

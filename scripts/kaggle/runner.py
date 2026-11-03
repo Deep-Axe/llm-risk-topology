@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import urllib.error
+import urllib.request
 import zipfile
 
 CODE_REVISION = 'SET_BY_PREPARE'
@@ -17,6 +19,22 @@ SPLITS = ['development', 'validation']
 HF_SECRET_NAMES = ('HF_Token', 'HF_TOKEN', 'big_data_project')
 INFERENCE_PYTHON = '3.11.14'
 UV_VERSION = '0.9.18'
+
+
+def check_network():
+    results = {}
+    for url in ['https://huggingface.co', 'https://github.com', 'https://www.kaggle.com']:
+        try:
+            with urllib.request.urlopen(url, timeout=12) as response:
+                results[url] = 'HTTP ' + str(response.status)
+        except urllib.error.HTTPError as exc:
+            results[url] = 'HTTP ' + str(exc.code)
+        except Exception as exc:
+            results[url] = type(exc).__name__
+    print('Network preflight:', json.dumps(results), flush=True)
+    if not any(value.startswith('HTTP ') for value in results.values()):
+        raise RuntimeError('Outbound network is unreachable; check this notebook Internet setting')
+    return results
 
 
 def read_hf_token(environ, get_secret):
@@ -85,6 +103,7 @@ def main():
     project = working / 'project'
     outputs = working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
+    check_network()
     get_secret = lambda name: None
     if not any(os.environ.get(name) for name in HF_SECRET_NAMES):
         from kaggle_secrets import UserSecretsClient
