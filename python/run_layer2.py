@@ -178,7 +178,7 @@ def _save_figures(folder, paired, spectrum, labels, baseline, full, delta, lower
     axis.set_xlim(0, 1)
     axis.set_ylim(0, 1)
     axis.set_title(
-        'Validation precision-recall\nÎ”PR-AUC %.3f (95%% interval %.3f to %.3f)'
+        'Validation precision-recall\nΔPR-AUC %.3f (95%% interval %.3f to %.3f)'
         % (delta, lower, upper)
     )
     axis.legend(frameon=False)
