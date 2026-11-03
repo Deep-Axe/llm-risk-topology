@@ -75,6 +75,15 @@ class MultimodelTest(unittest.TestCase):
             distance = np.linspace(0.1, 0.4, len(paired))
             results.append(score_model(paired, distance, [3], n_boot=29, seed=3))
         self.assertEqual({row['protocol'] for row in results}, {'group_kfold_validation'})
+        self.assertTrue(all(row['exploratory_selection'] for row in results))
+        fixed = score_model(
+            results[0]['scored'].assign(original_prompt_chars=10, variant_prompt_chars=12),
+            np.full(len(results[0]['scored']), 0.2),
+            [3, 5], n_boot=19, seed=3, fixed=(5, 'spectral_margin'),
+        )
+        self.assertEqual(fixed['chosen_k'], 5)
+        self.assertEqual(fixed['chosen_boundary'], 'spectral_margin')
+        self.assertFalse(fixed['exploratory_selection'])
         pooled = pooled_metrics(results, n_boot=29, seed=3)
         self.assertEqual(pooled['n_models'], 2)
         self.assertTrue(np.isfinite(pooled['delta_pr_auc']))
@@ -91,6 +100,10 @@ class MultimodelTest(unittest.TestCase):
         result = score_model(paired, distance, [3], n_boot=19, seed=6)
         self.assertEqual(result['protocol'], 'development_then_validation')
         self.assertEqual(len(result['scored']), 20)
+        fixed = score_model(paired, distance, [3, 5], n_boot=19, seed=6, fixed=(5, 'fiedler_magnitude'))
+        self.assertEqual(fixed['chosen_k'], 5)
+        self.assertEqual(fixed['chosen_boundary'], 'fiedler_magnitude')
+        self.assertFalse(fixed['exploratory_selection'])
         training = paired.loc[paired['split'].eq('development'), ['group_id', 'variant_prompt_text']]
         mask = template_keep_mask(result['scored'], training)
         self.assertEqual(len(mask), 20)

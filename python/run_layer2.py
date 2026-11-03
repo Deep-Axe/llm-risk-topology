@@ -234,7 +234,9 @@ def _summary_markdown(path, rows, pooled):
 
 def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_dir, summary_path,
                k_values, n_boot, seed):
-    from multimodel import family_size, pooled_metrics, score_model, template_keep_mask
+    from multimodel import (
+        development_settings, family_size, pooled_metrics, score_model, template_keep_mask, write_tables,
+    )
     from paired_outcomes import load_pair_table, outcomes_from_pairs, preferred_label
     frames = [pd.read_parquet(path) for path in flats]
     frame = pd.concat(frames, ignore_index=True)
@@ -244,9 +246,7 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
     if overlap_path and Path(overlap_path).exists():
         text = Path(overlap_path).read_text(encoding='utf-8')
         overlap = {line.strip() for line in text.splitlines() if line.strip()}
-    model_rows = []
-    scored_results = []
-    spectra = {}
+    prepared = []
     for model_id, part in frame.groupby('model_id', sort=True):
         label, secondary = preferred_label(part)
         paired, exclusions = outcomes_from_pairs(part, pairs, label)
@@ -254,7 +254,26 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
             continue
         paired = _attach_prompts(paired, prompts)
         distance, prompt_embed = _prompt_distances(paired)
-        result = score_model(paired, distance, k_values, n_boot, seed)
+        prepared.append({
+            'model_id': str(model_id), 'part': part, 'label': label, 'secondary': secondary,
+            'paired': paired, 'distance': distance, 'exclusions': exclusions, 'prompt_embed': prompt_embed,
+        })
+    settings = development_settings(
+        [(item['model_id'], item['paired'], item['distance']) for item in prepared], k_values, seed,
+    )
+    fixed = None if settings is None else (settings['k'], settings['boundary'])
+    model_rows = []
+    scored_results = []
+    spectra = {}
+    for item in prepared:
+        model_id = item['model_id']
+        paired = item['paired']
+        distance = item['distance']
+        label = item['label']
+        secondary = item['secondary']
+        exclusions = item['exclusions']
+        prompt_embed = item['prompt_embed']
+        result = score_model(paired, distance, k_values, n_boot, seed, fixed=fixed)
         training = paired.loc[paired['split'].eq('development'), ['group_id', 'variant_prompt_text']]
         if training.empty:
             training = result['scored'][['group_id', 'variant_prompt_text']]
@@ -281,6 +300,7 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
                 n_boot,
                 seed,
             )
+            overlap_metrics['n_pairs'] = int(keep.sum())
         family, size = family_size(str(model_id))
         metrics = result['metrics']
         row = {
@@ -292,23 +312,60 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
             'n_pairs': int(len(result['scored'])),
             'flip_rate': float(result['scored']['refusal_flip'].mean()),
             'baseline_pr_auc': metrics['baseline_pr_auc'],
+            'full_pr_auc': metrics['full_pr_auc'],
             'delta': metrics['delta_pr_auc'],
             'lower': metrics['delta_lower'],
             'upper': metrics['delta_upper'],
             'chosen_k': result['chosen_k'],
             'chosen_boundary': result['chosen_boundary'],
-            'exploratory_selection': result['protocol'] == 'group_kfold_validation',
+            'settings_from': None if settings is None else settings['models'],
+            'exploratory_selection': result['exploratory_selection'],
             'template_held_out': template_metrics,
             'without_overlap': overlap_metrics,
             'exclusions': exclusions,
         }
+        k_rows = []
+        for k in k_values:
+            if k == result['chosen_k']:
+                k_rows.append({
+                    'k': int(k), 'n_pairs': row['n_pairs'], 'delta': row['delta'],
+                    'lower': row['lower'], 'upper': row['upper'],
+                })
+                continue
+            alt_k = score_model(paired, distance, k_values, n_boot, seed, fixed=(k, result['chosen_boundary']))
+            k_rows.append({
+                'k': int(k), 'n_pairs': int(len(alt_k['scored'])),
+                'delta': alt_k['metrics']['delta_pr_auc'],
+                'lower': alt_k['metrics']['delta_lower'], 'upper': alt_k['metrics']['delta_upper'],
+            })
+        row['k_sensitivity'] = k_rows
+        harm_known = paired['harmful_transition'].notna()
+        if bool(harm_known.any()):
+            harm_events = int(paired.loc[harm_known, 'harmful_transition'].astype(bool).sum())
+            harm_pairs = paired.loc[harm_known].copy()
+            harm_distance = np.asarray(distance)[harm_known.to_numpy()]
+            harm_pairs['refusal_flip'] = harm_pairs['harmful_transition'].astype(bool)
+            harm_result = None
+            if harm_pairs['refusal_flip'].nunique() > 1:
+                harm_fixed = fixed if fixed is not None else (result['chosen_k'], result['chosen_boundary'])
+                harm_result = score_model(harm_pairs, harm_distance, k_values, n_boot, seed, fixed=harm_fixed)
+            rates = paired.loc[harm_known].groupby(['source'], dropna=False)['harmful_transition']
+            row['harmful_transition'] = {
+                'n_pairs': int(harm_known.sum()),
+                'n_events': harm_events,
+                'rate': float(paired.loc[harm_known, 'harmful_transition'].astype(bool).mean()),
+                'by_source': rates.agg(['mean', 'sum', 'size']).reset_index().to_dict(orient='records'),
+                'metrics': None if harm_result is None else harm_result['metrics'],
+            }
         if secondary:
-            alt, _ = outcomes_from_pairs(part, pairs, secondary)
+            alt, _ = outcomes_from_pairs(item['part'], pairs, secondary)
             alt = _attach_prompts(alt, prompts)
             alt_distance, _ = _prompt_distances(alt)
-            alt_result = score_model(alt, alt_distance, k_values, n_boot, seed)
+            alt_fixed = fixed if fixed is not None else (result['chosen_k'], result['chosen_boundary'])
+            alt_result = score_model(alt, alt_distance, k_values, n_boot, seed, fixed=alt_fixed)
             row['other_label'] = {
                 'label_source': 'refusal_rules' if secondary == 'refusal_rules' else 'wildguard',
+                'n_pairs': int(len(alt_result['scored'])),
                 'delta': alt_result['metrics']['delta_pr_auc'],
                 'lower': alt_result['metrics']['delta_lower'],
                 'upper': alt_result['metrics']['delta_upper'],
@@ -318,7 +375,19 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
         scored_results.append(result)
         spectra[str(model_id)] = result['spectrum']
         write_embeddings(Path(embedding_dir) / 'prompts.parquet', prompt_embed)
-    pooled = pooled_metrics(scored_results, n_boot, seed)
+    confirmatory_results = [
+        result for result, row in zip(scored_results, model_rows)
+        if row['model'] in ('mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta')
+        and result['protocol'] == 'development_then_validation'
+    ]
+    exploratory_results = [
+        result for result, row in zip(scored_results, model_rows)
+        if row['model'] not in ('mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta')
+        or result['protocol'] != 'development_then_validation'
+    ]
+    confirmatory = pooled_metrics(confirmatory_results, n_boot, seed) if confirmatory_results else None
+    exploratory = pooled_metrics(exploratory_results, n_boot, seed) if exploratory_results else None
+    pooled = confirmatory if confirmatory is not None else exploratory
     primary = scored_results[0]
     _save_figures(
         Path(figure_dir), primary['scored'], primary['spectrum'],
@@ -327,21 +396,36 @@ def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_d
         primary['scored']['model_id'].iloc[0],
     )
     forest_rows = list(model_rows)
-    forest_rows.append({
-        'model': 'pooled',
-        'delta': pooled['delta_pr_auc'],
-        'lower': pooled['delta_lower'],
-        'upper': pooled['delta_upper'],
-    })
+    if confirmatory is not None:
+        forest_rows.append({
+            'model': 'Mistral + Zephyr',
+            'delta': confirmatory['delta_pr_auc'],
+            'lower': confirmatory['delta_lower'],
+            'upper': confirmatory['delta_upper'],
+        })
+    if exploratory is not None:
+        forest_rows.append({
+            'model': 'exploratory pool',
+            'delta': exploratory['delta_pr_auc'],
+            'lower': exploratory['delta_lower'],
+            'upper': exploratory['delta_upper'],
+        })
     _forest(Path(figure_dir), forest_rows)
     payload = {
         'graph_scope': 'One k-NN graph per model, original responses only. Transductive: validation originals are nodes.',
+        'settings': settings,
         'models': model_rows,
+        'pre_registered_pool': confirmatory,
+        'exploratory_pool': exploratory,
         'pooled': pooled,
     }
     Path(results_path).parent.mkdir(parents=True, exist_ok=True)
     Path(results_path).write_text(json.dumps(payload, indent=2, default=str) + '\n', encoding='utf-8')
     _summary_markdown(Path(summary_path), model_rows, pooled)
+    write_tables(
+        Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\paper\layer2_tables.tex'),
+        model_rows, confirmatory, exploratory, len(frame),
+    )
     print(json.dumps({'models': len(model_rows), 'pooled_delta': pooled['delta_pr_auc']}, indent=2))
     return payload
 
@@ -484,7 +568,7 @@ def main():
         '--summary', type=Path,
         default=Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\pilot\layer2_summary.md'),
     )
-    parser.add_argument('--boot', type=int, default=199)
+    parser.add_argument('--boot', type=int, default=2000)
     parser.add_argument('--seed', type=int, default=20261104)
     args = parser.parse_args()
     run_models(

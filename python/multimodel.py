@@ -12,6 +12,10 @@ from response_graph import graph_spectrum
 
 
 BOUNDARY_NAMES = ('fiedler_magnitude', 'spectral_margin', 'spectral_neighbor_disagreement')
+DEVELOPMENT_MODELS = (
+    'mistralai/Mistral-7B-Instruct-v0.1',
+    'HuggingFaceH4/zephyr-7b-beta',
+)
 KNOWN_MODELS = {
     'Qwen/Qwen2.5-0.5B-Instruct': ('Qwen', '0.5B'),
     'Qwen/Qwen2.5-1.5B-Instruct': ('Qwen', '1.5B'),
@@ -96,6 +100,21 @@ def feature_matrices(query, library, graph_people, distance, k, boundary):
     return baseline, full, spectrum
 
 
+def _point_block(labels, base_score, full_score):
+    from sklearn.metrics import average_precision_score
+    labels = np.asarray(labels, dtype=int)
+    base = float(average_precision_score(labels, base_score))
+    full = float(average_precision_score(labels, full_score))
+    return {
+        'prevalence': float(labels.mean()) if labels.size else None,
+        'baseline_pr_auc': base,
+        'full_pr_auc': full,
+        'delta_pr_auc': full - base,
+        'delta_lower': None,
+        'delta_upper': None,
+    }
+
+
 def _oof_delta(paired, distance, k, boundary, n_boot, seed):
     people = _people(paired)
     baseline, full, spectrum = feature_matrices(paired, people, people, distance, k, boundary)
@@ -103,23 +122,57 @@ def _oof_delta(paired, distance, k, boundary, n_boot, seed):
     groups = paired['group_id'].to_numpy()
     base_score = oof_predictions(baseline, labels, groups)
     full_score = oof_predictions(full, labels, groups) if full is not None else base_score
-    block = metric_block(labels, base_score, full_score, groups, n_boot, seed)
+    if n_boot:
+        block = metric_block(labels, base_score, full_score, groups, n_boot, seed)
+    else:
+        block = _point_block(labels, base_score, full_score)
     return block, base_score, full_score, spectrum
 
 
-def select_boundary(paired, distance, k_values, n_boot, seed):
-    """Choose k and the boundary column by out-of-fold PR-AUC. Caller decides which rows."""
+def select_boundary(paired, distance, k_values, seed):
+    """Choose k and the boundary column by out-of-fold PR-AUC. No bootstrap."""
     best = None
     for k in k_values:
         for name in BOUNDARY_NAMES:
-            block, _, _, _ = _oof_delta(paired, distance, k, name, n_boot, seed)
+            block, _, _, _ = _oof_delta(paired, distance, k, name, 0, seed)
             if best is None or block['full_pr_auc'] > best[0]:
                 best = (block['full_pr_auc'], k, name)
     return best[1], best[2], best[0]
 
 
-def score_model(paired, distance, k_values, n_boot, seed):
-    """Return validation scores for one model and the protocol name."""
+def development_settings(prepared, k_values, seed):
+    """One (k, score) from the pooled development pairs of Mistral and Zephyr."""
+    pieces = []
+    sources = []
+    for model_id, paired, distance in prepared:
+        if model_id not in DEVELOPMENT_MODELS:
+            continue
+        development = paired['split'].eq('development')
+        if int(development.sum()) < 40:
+            continue
+        part = paired.loc[development].reset_index(drop=True)
+        part['_distance'] = np.asarray(distance)[development.to_numpy()]
+        pieces.append(part)
+        sources.append(model_id)
+    if not pieces:
+        return None
+    pooled = pd.concat(pieces, ignore_index=True)
+    chosen_k, chosen_name, selection_pr = select_boundary(
+        pooled.drop(columns=['_distance']), pooled['_distance'].to_numpy(), k_values, seed,
+    )
+    return {
+        'k': int(chosen_k),
+        'boundary': chosen_name,
+        'selection_pr_auc': float(selection_pr),
+        'models': sources,
+    }
+
+
+def score_model(paired, distance, k_values, n_boot, seed, fixed=None):
+    """Return validation scores for one model and the protocol name.
+
+    `fixed` is (k, boundary name). Validation-only models use it instead of reselecting.
+    """
     paired = paired.reset_index(drop=True)
     distance = np.asarray(distance, dtype=np.float64)
     development = paired['split'].eq('development')
@@ -129,7 +182,11 @@ def score_model(paired, distance, k_values, n_boot, seed):
         val = paired.loc[validation].reset_index(drop=True)
         dev_distance = distance[development.to_numpy()]
         val_distance = distance[validation.to_numpy()]
-        chosen_k, chosen_name, selection_pr = select_boundary(dev, dev_distance, k_values, n_boot, seed)
+        if fixed is None:
+            chosen_k, chosen_name, selection_pr = select_boundary(dev, dev_distance, k_values, seed)
+        else:
+            chosen_k, chosen_name = fixed
+            selection_pr = None
         graph_rows = pd.concat([dev, val], ignore_index=True)
         graph_people = _people(graph_rows)
         library = _people(dev)
@@ -146,9 +203,10 @@ def score_model(paired, distance, k_values, n_boot, seed):
         block = metric_block(val['refusal_flip'].astype(int), base_score, full_score, val['group_id'], n_boot, seed)
         return {
             'protocol': 'development_then_validation',
+            'exploratory_selection': False,
             'chosen_k': int(chosen_k),
             'chosen_boundary': chosen_name,
-            'selection_pr_auc': float(selection_pr),
+            'selection_pr_auc': None if selection_pr is None else float(selection_pr),
             'metrics': block,
             'baseline_score': base_score,
             'full_score': full_score,
@@ -158,26 +216,39 @@ def score_model(paired, distance, k_values, n_boot, seed):
         }
     scored = paired.loc[validation].reset_index(drop=True) if validation.any() else paired
     scored_distance = distance[validation.to_numpy()] if validation.any() else distance
-    best = None
-    chosen = None
-    spectrum = None
-    for k in k_values:
-        for name in BOUNDARY_NAMES:
-            block, base_score, full_score, spec = _oof_delta(scored, scored_distance, k, name, n_boot, seed)
-            if best is None or block['full_pr_auc'] > best['metrics']['full_pr_auc']:
-                best = {
-                    'protocol': 'group_kfold_validation',
-                    'chosen_k': int(k),
-                    'chosen_boundary': name,
-                    'selection_pr_auc': float(block['full_pr_auc']),
-                    'metrics': block,
-                    'baseline_score': base_score,
-                    'full_score': full_score,
-                    'scored': scored,
-                    'spectrum': spec,
-                    'graph_people': _people(scored),
-                }
-    return best
+    if fixed is None:
+        best_pr = -1.0
+        saved = None
+        for k in k_values:
+            for name in BOUNDARY_NAMES:
+                block, base_score, full_score, spec = _oof_delta(scored, scored_distance, k, name, 0, seed)
+                if block['full_pr_auc'] > best_pr:
+                    best_pr = block['full_pr_auc']
+                    saved = (k, name, base_score, full_score, spec, block['full_pr_auc'])
+        chosen_k, chosen_name, base_score, full_score, spec, selection_pr = saved
+        exploratory = True
+    else:
+        chosen_k, chosen_name = fixed
+        _, base_score, full_score, spec = _oof_delta(
+            scored, scored_distance, chosen_k, chosen_name, 0, seed,
+        )
+        selection_pr = None
+        exploratory = False
+    labels = scored['refusal_flip'].astype(int).to_numpy()
+    block = metric_block(labels, base_score, full_score, scored['group_id'], n_boot, seed)
+    return {
+        'protocol': 'group_kfold_validation',
+        'exploratory_selection': exploratory,
+        'chosen_k': int(chosen_k),
+        'chosen_boundary': chosen_name,
+        'selection_pr_auc': None if selection_pr is None else float(selection_pr),
+        'metrics': block,
+        'baseline_score': base_score,
+        'full_score': full_score,
+        'scored': scored,
+        'spectrum': spec,
+        'graph_people': _people(scored),
+    }
 
 
 def _align(left, right):
@@ -220,6 +291,96 @@ def template_keep_mask(scored, training):
         others = all_grams - blocked.get(group, set())
         keep.append(not grams or grams.isdisjoint(others))
     return np.asarray(keep, dtype=bool)
+
+
+def _tex(value):
+    return str(value).replace('\\', '\\textbackslash{}').replace('_', '\\_').replace('%', '\\%').replace('&', '\\&')
+
+
+def _num(value):
+    if value is None:
+        return '---'
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return '---'
+    if not np.isfinite(number):
+        return '---'
+    return '%.3f' % number
+
+
+def write_tables(path, rows, confirmatory, exploratory, n_responses):
+    """Booktabs tables and headline macros. No package other than booktabs."""
+    flips = [row['flip_rate'] for row in rows]
+    pooled = confirmatory if confirmatory is not None else exploratory
+    lines = [
+        '\\newcommand{\\LtwoPooledDelta}{%s}' % _num(None if pooled is None else pooled['delta_pr_auc']),
+        '\\newcommand{\\LtwoPooledLower}{%s}' % _num(None if pooled is None else pooled['delta_lower']),
+        '\\newcommand{\\LtwoPooledUpper}{%s}' % _num(None if pooled is None else pooled['delta_upper']),
+        '\\newcommand{\\LtwoModels}{%d}' % len(rows),
+        '\\newcommand{\\LtwoPairs}{%d}' % sum(row['n_pairs'] for row in rows),
+        '\\newcommand{\\LtwoResponses}{%d}' % int(n_responses),
+        '\\newcommand{\\LtwoFlipMin}{%s}' % _num(min(flips) if flips else None),
+        '\\newcommand{\\LtwoFlipMax}{%s}' % _num(max(flips) if flips else None),
+        '',
+        '\\begin{tabular}{llllrrrrr}',
+        '\\toprule',
+        'Model & Family & Label & Protocol & Pairs & Flip & B0 & B1 & $\\Delta$ (95\\% CI) \\\\',
+        '\\midrule',
+    ]
+    for row in rows:
+        lines.append('%s & %s & %s & %s & %d & %s & %s & %s & %s [%s, %s] \\\\' % (
+            _tex(row['model'].split('/')[-1]), _tex(row['family']), _tex(row['label_source']),
+            _tex(row['protocol']), row['n_pairs'], _num(row['flip_rate']),
+            _num(row['baseline_pr_auc']), _num(row['full_pr_auc']), _num(row['delta']),
+            _num(row['lower']), _num(row['upper']),
+        ))
+    if confirmatory is not None:
+        lines.append('\\midrule')
+        lines.append('Mistral + Zephyr &  &  & pre-registered & %d &  & %s & %s & %s [%s, %s] \\\\' % (
+            confirmatory['n_pairs'], _num(confirmatory['baseline_pr_auc']), _num(confirmatory['full_pr_auc']),
+            _num(confirmatory['delta_pr_auc']), _num(confirmatory['delta_lower']), _num(confirmatory['delta_upper']),
+        ))
+    if exploratory is not None:
+        lines.append('All other models &  &  & exploratory & %d &  & %s & %s & %s [%s, %s] \\\\' % (
+            exploratory['n_pairs'], _num(exploratory['baseline_pr_auc']), _num(exploratory['full_pr_auc']),
+            _num(exploratory['delta_pr_auc']), _num(exploratory['delta_lower']), _num(exploratory['delta_upper']),
+        ))
+    lines.extend(['\\bottomrule', '\\end{tabular}', ''])
+    lines.extend([
+        '\\begin{tabular}{llr r}',
+        '\\toprule',
+        'Check & Model & Pairs & $\\Delta$ (95\\% CI) \\\\',
+        '\\midrule',
+    ])
+    for row in rows:
+        name = _tex(row['model'].split('/')[-1])
+        for check, block in (
+            ('overlap excluded', row.get('without_overlap')),
+            ('other label', row.get('other_label')),
+            ('template held out', row.get('template_held_out')),
+        ):
+            if not block:
+                continue
+            lines.append('%s & %s & %s & %s [%s, %s] \\\\' % (
+                check, name, block.get('n_pairs', '---'), _num(block.get('delta', block.get('delta_pr_auc'))),
+                _num(block.get('lower', block.get('delta_lower'))), _num(block.get('upper', block.get('delta_upper'))),
+            ))
+        for item in row.get('k_sensitivity') or []:
+            lines.append('k=%d & %s & %s & %s [%s, %s] \\\\' % (
+                item['k'], name, item.get('n_pairs', '---'), _num(item['delta']),
+                _num(item['lower']), _num(item['upper']),
+            ))
+        harm = row.get('harmful_transition')
+        if harm and harm.get('metrics'):
+            lines.append('harmful transition & %s & %d & %s [%s, %s] \\\\' % (
+                name, harm['n_pairs'], _num(harm['metrics']['delta_pr_auc']),
+                _num(harm['metrics']['delta_lower']), _num(harm['metrics']['delta_upper']),
+            ))
+    lines.extend(['\\bottomrule', '\\end{tabular}', ''])
+    path = __import__('pathlib').Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('\n'.join(lines), encoding='utf-8')
 
 
 def pooled_metrics(model_results, n_boot, seed):
