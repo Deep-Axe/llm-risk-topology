@@ -60,10 +60,11 @@ def prepare(output, revision, owner='deepax'):
                        'individual licenses are in source_terms.json. Keep this dataset private.'})
     runner = (ROOT / 'scripts/kaggle/runner.py').read_text(encoding='utf-8')
     runner = runner.replace("CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{revision}'")
-    (kernel / 'runner.py').write_text(runner, encoding='utf-8', newline='\n')
+    notebook = make_notebook(runner)
+    atomic_write(kernel / 'runner.ipynb', notebook)
     atomic_write(kernel / 'kernel-metadata.json', {
         'id': owner + '/llm-risk-topology-two-model-pilot', 'title': 'LLM Risk Topology two-model pilot',
-        'code_file': 'runner.py', 'language': 'python', 'kernel_type': 'script', 'is_private': True,
+        'code_file': 'runner.ipynb', 'language': 'python', 'kernel_type': 'notebook', 'is_private': True,
         'enable_gpu': True, 'enable_internet': True, 'machine_shape': 'NvidiaTeslaT4',
         'dataset_sources': [owner + '/llm-risk-topology-pilot-v5'],
         'competition_sources': [], 'kernel_sources': []})
@@ -73,6 +74,13 @@ def prepare(output, revision, owner='deepax'):
     print('Save the kernel without running it:')
     print(f'kaggle kernels push -p "{kernel}" --accelerator NvidiaTeslaT4 --no-run')
     return output
+
+
+def make_notebook(runner):
+    return {'nbformat': 4, 'nbformat_minor': 5,
+            'metadata': {'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'}},
+            'cells': [{'cell_type': 'code', 'id': 'pilot-runner', 'metadata': {},
+                       'execution_count': None, 'outputs': [], 'source': runner.splitlines(keepends=True)}]}
 
 
 def main():

@@ -12,9 +12,20 @@ PATH = Path(__file__).resolve().parents[1] / 'scripts/kaggle/runner.py'
 SPEC = importlib.util.spec_from_file_location('kaggle_runner', PATH)
 RUNNER = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(RUNNER)
+PREPARE_SPEC = importlib.util.spec_from_file_location('kaggle_prepare', PATH.with_name('prepare.py'))
+PREPARE = importlib.util.module_from_spec(PREPARE_SPEC)
+PREPARE_SPEC.loader.exec_module(PREPARE)
 
 
 class KagglePayloadTest(unittest.TestCase):
+    def test_notebook_payload_is_json_and_preserves_executable_source(self):
+        source = 'print("synthetic notebook")\n'
+        notebook = json.loads(json.dumps(PREPARE.make_notebook(source)))
+        self.assertEqual(notebook['nbformat'], 4)
+        self.assertEqual(''.join(notebook['cells'][0]['source']), source)
+        compile(''.join(notebook['cells'][0]['source']), 'runner.ipynb', 'exec')
+        self.assertEqual(notebook['cells'][0]['outputs'], [])
+
     def test_network_failure_is_reported_before_secret_lookup(self):
         with patch.object(RUNNER.urllib.request, 'urlopen', side_effect=TimeoutError):
             with self.assertRaisesRegex(RuntimeError, 'Outbound network'):
