@@ -1,0 +1,473 @@
+{
+  "limitations": [
+    "Inherited pilot_v4 rows are prefix samples; only new WildJailbreak rows are hash sampled.",
+    "Template matches use source-original lexical containment; semantic paraphrases need review.",
+    "Existing same-test-split XSTest near matches retain their frozen distinct group IDs.",
+    "Public prompts may occur in assistant training data; evaluator overlap is separately recorded.",
+    "Source intent is a provenance label, not a label on fresh output behavior.",
+    "Token estimates exclude generated outputs and evaluator work."
+  ],
+  "local_output": "data/processed/prompts/pilot_v5",
+  "preparation_sha256": "1dbcdc577745b89d8aa15763fc043a5016c23af7d66e4d999b59350e00728c4a",
+  "prompt_manifest_id": "prompts_95ad99a1e8421d1132bf962497ab1d1cfeb9c799679457aff2081772f41290da",
+  "quality": {
+    "base_prompt_count": 2030,
+    "base_records_unchanged": true,
+    "benign_test_pair_groups": 133,
+    "candidate_occurrences": 5950,
+    "canonical_source_counts": {
+      "OpenSafetyLab/Salad-Data": 1280,
+      "allenai/wildjailbreak": 4071,
+      "paul-rottger/xstest": 450
+    },
+    "checks": {
+      "contract_validation": true,
+      "no_cross_split_question_near_duplicates": true,
+      "one_split_per_group": true,
+      "parent_and_pair_groups_match": true,
+      "unique_inputs": true,
+      "v4_records_and_splits_unchanged": true
+    },
+    "cross_source_duplicate_inputs": 0,
+    "duplicate_occurrences_removed": 149,
+    "input_source_rows": 3350,
+    "linked_pair_occurrences": 2575,
+    "near_duplicate_audit": {
+      "excluded_bridge_components": 0,
+      "final_cross_split_question_matches": 0,
+      "frozen_group_merge_components": 5,
+      "merge_components": 5,
+      "same_split_frozen_exceptions": 2,
+      "template_only_matches": 17791,
+      "threshold": 0.8
+    },
+    "oversize_or_over_budget_groups_skipped": 0,
+    "pair_split_counts": {
+      "development": 1820,
+      "test": 372,
+      "validation": 383
+    },
+    "pair_table": [
+      {
+        "intent": "harmful",
+        "pair_groups": 354,
+        "pairs": 424,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "development",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 56,
+        "pairs": 56,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "development",
+        "variant_type": "defense"
+      },
+      {
+        "intent": "benign",
+        "pair_groups": 660,
+        "pairs": 667,
+        "source": "allenai/wildjailbreak",
+        "split": "development",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 666,
+        "pairs": 673,
+        "source": "allenai/wildjailbreak",
+        "split": "development",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 76,
+        "pairs": 90,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "test",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 12,
+        "pairs": 12,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "test",
+        "variant_type": "defense"
+      },
+      {
+        "intent": "benign",
+        "pair_groups": 133,
+        "pairs": 134,
+        "source": "allenai/wildjailbreak",
+        "split": "test",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 135,
+        "pairs": 136,
+        "source": "allenai/wildjailbreak",
+        "split": "test",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 75,
+        "pairs": 86,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "validation",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 7,
+        "pairs": 7,
+        "source": "OpenSafetyLab/Salad-Data",
+        "split": "validation",
+        "variant_type": "defense"
+      },
+      {
+        "intent": "benign",
+        "pair_groups": 146,
+        "pairs": 149,
+        "source": "allenai/wildjailbreak",
+        "split": "validation",
+        "variant_type": "adversarial"
+      },
+      {
+        "intent": "harmful",
+        "pair_groups": 136,
+        "pairs": 141,
+        "source": "allenai/wildjailbreak",
+        "split": "validation",
+        "variant_type": "adversarial"
+      }
+    ],
+    "rejected_rows": [],
+    "reserved_xstest_groups": 450,
+    "salad_qids_with_multiple_base_texts": 0,
+    "selected_groups": 3226,
+    "selected_unique_prompts": 5801,
+    "source_field_audit": [
+      {
+        "config": "attack_enhanced_set",
+        "fields": {
+          "1-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "2-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "3-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "aid": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "augq": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "baseq": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "method": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "qid": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          }
+        },
+        "observed_rows": 600,
+        "source_id": "OpenSafetyLab/Salad-Data"
+      },
+      {
+        "config": "defense_enhanced_set",
+        "fields": {
+          "1-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "2-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "3-category": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "baseq": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "daugq": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "did": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "dmethod": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "qid": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          }
+        },
+        "observed_rows": 100,
+        "source_id": "OpenSafetyLab/Salad-Data"
+      },
+      {
+        "config": "train",
+        "fields": {
+          "adversarial": {
+            "empty_string": 300,
+            "missing": 0,
+            "null": 0
+          },
+          "completion": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "data_type": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "vanilla": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          }
+        },
+        "observed_rows": 300,
+        "source_id": "allenai/wildjailbreak"
+      },
+      {
+        "config": "default",
+        "fields": {
+          "focus": {
+            "empty_string": 75,
+            "missing": 0,
+            "null": 0
+          },
+          "id": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "label": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "note": {
+            "empty_string": 345,
+            "missing": 0,
+            "null": 0
+          },
+          "prompt": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "type": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          }
+        },
+        "observed_rows": 450,
+        "source_id": "paul-rottger/xstest"
+      },
+      {
+        "config": "train",
+        "fields": {
+          "adversarial": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          },
+          "vanilla": {
+            "empty_string": 0,
+            "missing": 0,
+            "null": 0
+          }
+        },
+        "observed_rows": 1900,
+        "selection": "full-file intent-stratified row hashes",
+        "source_id": "allenai/wildjailbreak"
+      }
+    ],
+    "source_occurrence_counts": {
+      "OpenSafetyLab/Salad-Data": 1400,
+      "allenai/wildjailbreak": 4100,
+      "paul-rottger/xstest": 450
+    },
+    "split_group_counts": {
+      "development": 1965,
+      "test": 854,
+      "validation": 407
+    },
+    "split_prompt_counts": {
+      "development": 3785,
+      "test": 1226,
+      "validation": 790
+    },
+    "test_pair_groups": 356,
+    "token_estimate": {
+      "chat_input_tokens_eight_models": 6723184,
+      "chat_input_tokens_per_model": 840398,
+      "chat_input_tokens_two_models": 1680796,
+      "maximum_chat_tokens": 2597,
+      "output_tokens_excluded": true,
+      "prompts": 5801,
+      "prompts_over_4096_chat_tokens": 0,
+      "raw_input_tokens_per_model": 793990,
+      "revision": "ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca",
+      "tokenizer": "mistralai/Mistral-7B-Instruct-v0.1"
+    },
+    "unchanged_pair_occurrences": 25,
+    "unique_candidate_prompts": 5801,
+    "unique_linked_pairs": 2575,
+    "variant_counts": {
+      "adversarial": 2500,
+      "defense": 75,
+      "original": 2776,
+      "unpaired": 450
+    },
+    "wildguard_overlap": {
+      "benign_test_pair_groups": 133,
+      "by_source_split": [
+        {
+          "exact": 8,
+          "overlap": 73,
+          "overlap_groups": 72,
+          "prompts": 907,
+          "source": "OpenSafetyLab/Salad-Data",
+          "split": "development"
+        },
+        {
+          "exact": 2,
+          "overlap": 17,
+          "overlap_groups": 17,
+          "prompts": 195,
+          "source": "OpenSafetyLab/Salad-Data",
+          "split": "test"
+        },
+        {
+          "exact": 0,
+          "overlap": 19,
+          "overlap_groups": 18,
+          "prompts": 178,
+          "source": "OpenSafetyLab/Salad-Data",
+          "split": "validation"
+        },
+        {
+          "exact": 281,
+          "overlap": 295,
+          "overlap_groups": 286,
+          "prompts": 2878,
+          "source": "allenai/wildjailbreak",
+          "split": "development"
+        },
+        {
+          "exact": 40,
+          "overlap": 42,
+          "overlap_groups": 41,
+          "prompts": 581,
+          "source": "allenai/wildjailbreak",
+          "split": "test"
+        },
+        {
+          "exact": 52,
+          "overlap": 55,
+          "overlap_groups": 52,
+          "prompts": 612,
+          "source": "allenai/wildjailbreak",
+          "split": "validation"
+        },
+        {
+          "exact": 0,
+          "overlap": 1,
+          "overlap_groups": 1,
+          "prompts": 450,
+          "source": "paul-rottger/xstest",
+          "split": "test"
+        }
+      ],
+      "clean_benign_test_pair_groups": 117,
+      "clean_new_test_pair_groups": 229,
+      "clean_test_pair_groups": 301,
+      "exact_prompts": 383,
+      "file_sha256": "02ecea8a724a9146a1e473a95a7cdf262adfe9c7d5408953ca86d2fcfbdc8953",
+      "new_test_pair_groups": 267,
+      "overlap_groups": 487,
+      "overlap_prompts": 502,
+      "revision": "d29c47f41c8b51348b5c8e8c81c039b3132b66d1",
+      "test_pair_groups": 356,
+      "training_rows": 86759
+    }
+  },
+  "sources": [
+    {
+      "access_status": "verified",
+      "license": "apache-2.0",
+      "provider": "huggingface",
+      "repository": "OpenSafetyLab/Salad-Data",
+      "revision": "d21a325e276a99bd69b1fbb8aa51a9f249486b72",
+      "source_id": "OpenSafetyLab/Salad-Data",
+      "stretch": false,
+      "url": "https://huggingface.co/datasets/OpenSafetyLab/Salad-Data"
+    },
+    {
+      "access_status": "verified",
+      "license": "odc-by",
+      "provider": "huggingface",
+      "repository": "allenai/wildjailbreak",
+      "revision": "5ddc12a7894f842b0619b8e1c7ee496b198af009",
+      "source_id": "allenai/wildjailbreak",
+      "stretch": false,
+      "url": "https://huggingface.co/datasets/allenai/wildjailbreak"
+    },
+    {
+      "access_status": "verified",
+      "license": null,
+      "provider": "github",
+      "repository": "paul-rottger/xstest",
+      "revision": "d7bb5bd738c1fcbc36edd83d5e7d1b71a3e2d84d",
+      "source_id": "paul-rottger/xstest",
+      "stretch": false,
+      "url": "https://github.com/paul-rottger/xstest"
+    }
+  ]
+}
