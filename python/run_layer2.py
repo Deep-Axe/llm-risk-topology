@@ -187,6 +187,165 @@ def _save_figures(folder, paired, spectrum, labels, baseline, full, delta, lower
     plt.close(fig)
 
 
+def _forest(folder, rows):
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    folder.mkdir(parents=True, exist_ok=True)
+    labels = [row['model'] for row in rows]
+    delta = [row['delta'] for row in rows]
+    lower = [row['delta'] - row['lower'] for row in rows]
+    upper = [row['upper'] - row['delta'] for row in rows]
+    positions = np.arange(len(rows))[::-1]
+    fig, axis = plt.subplots(figsize=(8, max(3.2, 0.45 * len(rows) + 1.4)))
+    axis.errorbar(delta, positions, xerr=[lower, upper], fmt='o', capsize=3)
+    axis.axvline(0.0, color='0.5', linewidth=0.8)
+    axis.set_yticks(positions)
+    axis.set_yticklabels(labels)
+    axis.set_xlabel('Change in PR-AUC when the boundary score is added')
+    axis.set_title('Per-model improvement over the baselines')
+    fig.tight_layout()
+    fig.savefig(folder / 'forest_delta.png', dpi=150)
+    plt.close(fig)
+
+
+def _summary_markdown(path, rows, pooled):
+    lines = [
+        '| Model | Family | Size | Label | Protocol | Pairs | Flip rate | Baseline PR-AUC | Delta | Interval |',
+        '| --- | --- | --- | --- | --- | ---: | ---: | ---: | ---: | --- |',
+    ]
+    for row in rows:
+        lines.append(
+            '| %s | %s | %s | %s | %s | %d | %.3f | %.3f | %.3f | %.3f to %.3f |' % (
+                row['model'], row['family'], row['size'], row['label_source'], row['protocol'],
+                row['n_pairs'], row['flip_rate'], row['baseline_pr_auc'], row['delta'],
+                row['lower'], row['upper'],
+            )
+        )
+    lines.append(
+        '| pooled |  |  |  |  | %d |  | %.3f | %.3f | %.3f to %.3f |' % (
+            pooled['n_pairs'], pooled['baseline_pr_auc'], pooled['delta_pr_auc'],
+            pooled['delta_lower'], pooled['delta_upper'],
+        )
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+
+def run_models(flats, pilot, overlap_path, figure_dir, results_path, embedding_dir, summary_path,
+               k_values, n_boot, seed):
+    from multimodel import family_size, pooled_metrics, score_model, template_keep_mask
+    from paired_outcomes import load_pair_table, outcomes_from_pairs, preferred_label
+    frames = [pd.read_parquet(path) for path in flats]
+    frame = pd.concat(frames, ignore_index=True)
+    prompts = prompt_table(pilot)
+    pairs = load_pair_table(pilot)
+    overlap = set()
+    if overlap_path and Path(overlap_path).exists():
+        text = Path(overlap_path).read_text(encoding='utf-8')
+        overlap = {line.strip() for line in text.splitlines() if line.strip()}
+    model_rows = []
+    scored_results = []
+    spectra = {}
+    for model_id, part in frame.groupby('model_id', sort=True):
+        label, secondary = preferred_label(part)
+        paired, exclusions = outcomes_from_pairs(part, pairs, label)
+        if paired.empty:
+            continue
+        paired = _attach_prompts(paired, prompts)
+        distance, prompt_embed = _prompt_distances(paired)
+        result = score_model(paired, distance, k_values, n_boot, seed)
+        training = paired.loc[paired['split'].eq('development'), ['group_id', 'variant_prompt_text']]
+        if training.empty:
+            training = result['scored'][['group_id', 'variant_prompt_text']]
+        mask = template_keep_mask(result['scored'], training)
+        template_metrics = None
+        if int(mask.sum()) >= 20 and result['scored'].loc[mask, 'refusal_flip'].nunique() > 1:
+            template_metrics = metric_block(
+                result['scored'].loc[mask, 'refusal_flip'].astype(int),
+                result['baseline_score'][mask],
+                result['full_score'][mask],
+                result['scored'].loc[mask, 'group_id'],
+                n_boot,
+                seed,
+            )
+            template_metrics['n_pairs'] = int(mask.sum())
+        keep = ~result['scored']['group_id'].isin(overlap)
+        overlap_metrics = None
+        if int(keep.sum()) >= 20 and result['scored'].loc[keep, 'refusal_flip'].nunique() > 1:
+            overlap_metrics = metric_block(
+                result['scored'].loc[keep, 'refusal_flip'].astype(int),
+                result['baseline_score'][keep.to_numpy()],
+                result['full_score'][keep.to_numpy()],
+                result['scored'].loc[keep, 'group_id'],
+                n_boot,
+                seed,
+            )
+        family, size = family_size(str(model_id))
+        metrics = result['metrics']
+        row = {
+            'model': str(model_id),
+            'family': family,
+            'size': size,
+            'label_source': 'wildguard' if label == 'refusal' else 'refusal_rules',
+            'protocol': result['protocol'],
+            'n_pairs': int(len(result['scored'])),
+            'flip_rate': float(result['scored']['refusal_flip'].mean()),
+            'baseline_pr_auc': metrics['baseline_pr_auc'],
+            'delta': metrics['delta_pr_auc'],
+            'lower': metrics['delta_lower'],
+            'upper': metrics['delta_upper'],
+            'chosen_k': result['chosen_k'],
+            'chosen_boundary': result['chosen_boundary'],
+            'exploratory_selection': result['protocol'] == 'group_kfold_validation',
+            'template_held_out': template_metrics,
+            'without_overlap': overlap_metrics,
+            'exclusions': exclusions,
+        }
+        if secondary:
+            alt, _ = outcomes_from_pairs(part, pairs, secondary)
+            alt = _attach_prompts(alt, prompts)
+            alt_distance, _ = _prompt_distances(alt)
+            alt_result = score_model(alt, alt_distance, k_values, n_boot, seed)
+            row['other_label'] = {
+                'label_source': 'refusal_rules' if secondary == 'refusal_rules' else 'wildguard',
+                'delta': alt_result['metrics']['delta_pr_auc'],
+                'lower': alt_result['metrics']['delta_lower'],
+                'upper': alt_result['metrics']['delta_upper'],
+                'baseline_pr_auc': alt_result['metrics']['baseline_pr_auc'],
+            }
+        model_rows.append(row)
+        scored_results.append(result)
+        spectra[str(model_id)] = result['spectrum']
+        write_embeddings(Path(embedding_dir) / 'prompts.parquet', prompt_embed)
+    pooled = pooled_metrics(scored_results, n_boot, seed)
+    primary = scored_results[0]
+    _save_figures(
+        Path(figure_dir), primary['scored'], primary['spectrum'],
+        primary['graph_people']['labels'], primary['baseline_score'], primary['full_score'],
+        primary['metrics']['delta_pr_auc'], primary['metrics']['delta_lower'], primary['metrics']['delta_upper'],
+        primary['scored']['model_id'].iloc[0],
+    )
+    forest_rows = list(model_rows)
+    forest_rows.append({
+        'model': 'pooled',
+        'delta': pooled['delta_pr_auc'],
+        'lower': pooled['delta_lower'],
+        'upper': pooled['delta_upper'],
+    })
+    _forest(Path(figure_dir), forest_rows)
+    payload = {
+        'graph_scope': 'One k-NN graph per model, original responses only. Transductive: validation originals are nodes.',
+        'models': model_rows,
+        'pooled': pooled,
+    }
+    Path(results_path).parent.mkdir(parents=True, exist_ok=True)
+    Path(results_path).write_text(json.dumps(payload, indent=2, default=str) + '\n', encoding='utf-8')
+    _summary_markdown(Path(summary_path), model_rows, pooled)
+    print(json.dumps({'models': len(model_rows), 'pooled_delta': pooled['delta_pr_auc']}, indent=2))
+    return payload
+
+
 def run(flat, pilot, overlap_path, figure_dir, results_path, embedding_dir, k_values, n_boot, seed):
     paired, exclusions = load_flat(flat, 'refusal_rules')
     prompts = prompt_table(pilot)
@@ -303,7 +462,7 @@ def run(flat, pilot, overlap_path, figure_dir, results_path, embedding_dir, k_va
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--flat', type=Path, required=True)
+    parser.add_argument('--flat', type=Path, nargs='+', required=True)
     parser.add_argument('--pilot', type=Path, default=Path('data/processed/prompts/pilot_v5'))
     parser.add_argument(
         '--overlap-groups', type=Path,
@@ -321,11 +480,17 @@ def main():
         default=Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\pilot\layer2_results.json'),
     )
     parser.add_argument('--embeddings', type=Path, default=Path('data/processed/analysis/embeddings'))
+    parser.add_argument(
+        '--summary', type=Path,
+        default=Path(r'C:\Users\ahuja\Desktop\minor_big_data\report\pilot\layer2_summary.md'),
+    )
     parser.add_argument('--boot', type=int, default=199)
     parser.add_argument('--seed', type=int, default=20261104)
     args = parser.parse_args()
-    run(args.flat, args.pilot, args.overlap_groups, args.figures, args.results, args.embeddings,
-        [10, 15, 20], args.boot, args.seed)
+    run_models(
+        args.flat, args.pilot, args.overlap_groups, args.figures, args.results, args.embeddings,
+        args.summary, [10, 15, 20], args.boot, args.seed,
+    )
 
 
 if __name__ == '__main__':

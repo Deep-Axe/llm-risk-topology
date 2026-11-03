@@ -68,6 +68,14 @@ def _scale(train, test):
     return (train - mean) / std, (test - mean) / std
 
 
+def fit_predict(train_features, train_labels, test_features):
+    """One fit on the training rows and one score of the held-out rows."""
+    train = train_features.to_numpy(dtype=np.float64)
+    test = test_features.to_numpy(dtype=np.float64)
+    train_x, test_x = _scale(train, test)
+    return _fit_predict(train_x, np.asarray(train_labels, dtype=int), test_x)
+
+
 def oof_predictions(features, labels, groups, n_splits=5):
     """Out-of-fold probabilities. `groups` keeps a prompt group inside one fold."""
     predictions = np.zeros(len(labels), dtype=np.float64)

@@ -111,6 +111,88 @@ def outcomes_from_frame(frame, label_column):
     return paired.reset_index(drop=True), exclusions
 
 
+def load_pair_table(pilot_dir):
+    path = Path(pilot_dir) / 'pairs.jsonl'
+    rows = [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines() if line.strip()]
+    return pd.DataFrame(rows)
+
+
+def outcomes_from_pairs(frame, pairs, label_column):
+    """Join each explicit pair to the responses of one model."""
+    work = frame.copy()
+    if label_column not in work.columns:
+        raise ValueError('Missing label column ' + label_column)
+    failed = 0
+    if 'status' in work.columns:
+        failed = int((work['status'] != 'success').sum())
+        work = work[work['status'] == 'success']
+    work = work[work[label_column].notna()].copy()
+    work['refusal_label'] = work[label_column]
+    if 'split' not in work.columns:
+        work['split'] = 'validation'
+    wanted = [
+        'model_id', 'prompt_id', 'response_id', 'group_id', 'source', 'intent', 'split',
+        'variant_type', 'refusal_label', 'response_harmful', 'output_tokens', 'text_chars', 'vector',
+    ]
+    for column in wanted:
+        if column not in work.columns:
+            work[column] = pd.NA
+    lookup = work.drop_duplicates(['model_id', 'prompt_id']).set_index(['model_id', 'prompt_id'])
+    built = []
+    missing = 0
+    for model_id in work['model_id'].unique():
+        for pair in pairs.itertuples(index=False):
+            try:
+                original = lookup.loc[(model_id, pair.original_prompt_id)]
+                variant = lookup.loc[(model_id, pair.variant_prompt_id)]
+            except KeyError:
+                missing += 1
+                continue
+            built.append({
+                'model_id': model_id,
+                'group_id': original['group_id'],
+                'source': original['source'],
+                'intent': original['intent'],
+                'split': original['split'],
+                'original_prompt_id': pair.original_prompt_id,
+                'original_response_id': original['response_id'],
+                'original_refusal': bool(original['refusal_label']),
+                'original_harmful': original['response_harmful'],
+                'original_output_tokens': original['output_tokens'],
+                'original_text_chars': original['text_chars'],
+                'original_vector': original['vector'],
+                'variant_type': pair.variant_type,
+                'variant_prompt_id': pair.variant_prompt_id,
+                'variant_response_id': variant['response_id'],
+                'variant_refusal': bool(variant['refusal_label']),
+                'variant_harmful': variant['response_harmful'],
+            })
+    paired = pd.DataFrame(built)
+    exclusions = {'failed_response': failed, 'pair_endpoints_missing': int(missing)}
+    if paired.empty:
+        return paired, exclusions
+    paired['refusal_flip'] = paired['original_refusal'] != paired['variant_refusal']
+    paired['flip_direction'] = 'none'
+    refused = paired['original_refusal'] & ~paired['variant_refusal']
+    complied = ~paired['original_refusal'] & paired['variant_refusal']
+    paired.loc[refused, 'flip_direction'] = 'refused_to_complied'
+    paired.loc[complied, 'flip_direction'] = 'complied_to_refused'
+    orig_harm = paired['original_harmful']
+    var_harm = paired['variant_harmful']
+    paired['harmful_transition'] = pd.NA
+    known = orig_harm.notna() & var_harm.notna()
+    paired.loc[known, 'harmful_transition'] = ~orig_harm[known].astype(bool) & var_harm[known].astype(bool)
+    return paired.reset_index(drop=True), exclusions
+
+
+def preferred_label(frame):
+    """WildGuard `refusal` when it is filled, otherwise the rule labeler."""
+    if 'refusal' in frame.columns and int(frame['refusal'].notna().sum()) > 0:
+        secondary = 'refusal_rules' if 'refusal_rules' in frame.columns and int(frame['refusal_rules'].notna().sum()) > 0 else None
+        return 'refusal', secondary
+    return 'refusal_rules', None
+
+
 def load_flat(path, label_column):
     frame = pd.read_parquet(path)
     return outcomes_from_frame(frame, label_column)
