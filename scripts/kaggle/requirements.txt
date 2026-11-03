@@ -1,0 +1,7 @@
+vllm==0.8.5.post1
+transformers==4.51.3
+huggingface_hub==0.36.2
+sentencepiece==0.2.1
+protobuf==5.29.5
+jsonschema==4.26.0
+numpy==1.26.4
