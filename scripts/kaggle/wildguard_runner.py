@@ -178,7 +178,7 @@ def main():
     if '--label-worker' not in sys.argv:
         worker = working / 'wildguard_worker.py'
         worker.write_text((project / 'scripts/kaggle/wildguard_runner.py').read_text().replace(
-            "CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{CODE_REVISION}'"))
+            "CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{CODE_REVISION}'", 1))
         subprocess.run([python, '-u', str(worker), '--label-worker'], cwd=project, check=True)
         return
     subprocess.run([python, '-c', 'import torch; assert torch.cuda.device_count() >= 2, "Select T4 x2"'],

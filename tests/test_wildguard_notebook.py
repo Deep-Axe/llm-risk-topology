@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import tarfile
 import tempfile
+from types import ModuleType, SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -134,6 +135,38 @@ class WildGuardHandoffTest(unittest.TestCase):
             self.assertIn("CODE_REVISION = '" + 'a' * 40 + "'", source)
             compile(source, 'wildguard.ipynb', 'exec')
             self.assertEqual(notebook['cells'][1]['outputs'], [])
+
+    def test_staged_frontend_hands_pinned_code_to_managed_python_without_file_global(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.object(PREPARE.subprocess, 'run'):
+            root = Path(tmp)
+            output = PREPARE.prepare(root / 'stage', 'a' * 40, 'deepamahuja')
+            notebook = json.loads((output / 'wildguard.ipynb').read_text(encoding='utf-8'))
+            staged = ModuleType('notebook_cell')
+            exec(''.join(notebook['cells'][1]['source']), staged.__dict__)
+            working, inputs = root / 'working', root / 'input'
+            project = working / 'project'
+            scripts = project / 'scripts/kaggle';scripts.mkdir(parents=True)
+            (scripts / 'wildguard_runner.py').write_bytes((ROOT / 'scripts/kaggle/wildguard_runner.py').read_bytes())
+            dataset = inputs / 'dataset';dataset.mkdir(parents=True)
+            (dataset / 'pilot_v5').mkdir()
+            (dataset / 'payload.json').write_text('{}')
+            helpers = SimpleNamespace(check_network=lambda: None, load_wildguard_token=lambda: None,
+                                      install_payload=lambda *args: None,
+                                      create_inference_environment=lambda path: working / 'inference-env/bin/python')
+            spec = SimpleNamespace(loader=SimpleNamespace(exec_module=lambda module: None))
+            mapped = lambda value: {'/kaggle/working': working, '/kaggle/input': inputs}.get(value, Path(value))
+            with patch.object(staged, 'Path', side_effect=mapped), \
+                    patch.object(staged.importlib.util, 'spec_from_file_location', return_value=spec), \
+                    patch.object(staged.importlib.util, 'module_from_spec', return_value=helpers), \
+                    patch.object(staged, 'source_tree'), \
+                    patch.object(staged.sys, 'argv', ['notebook']), \
+                    patch.dict(staged.os.environ), \
+                    patch.object(staged.subprocess, 'run') as run:
+                staged.main()
+            worker = ModuleType('managed_worker')
+            exec((working / 'wildguard_worker.py').read_text(), worker.__dict__)
+            self.assertEqual(worker.CODE_REVISION, 'a' * 40)
+            self.assertEqual(run.call_args.args[0][-1], '--label-worker')
 
 
 if __name__ == '__main__':
