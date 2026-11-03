@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -13,7 +14,7 @@ CODE_REVISION = 'SET_BY_PREPARE'
 REPOSITORY = 'https://github.com/Deep-Axe/llm-risk-topology.git'
 MODELS = ['mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta']
 SPLITS = ['development', 'validation']
-HF_SECRET_NAMES = ('HF_TOKEN', 'HF_Token', 'big_data_project')
+HF_SECRET_NAMES = ('HF_Token', 'HF_TOKEN', 'big_data_project')
 INFERENCE_PYTHON = '3.11.14'
 UV_VERSION = '0.9.18'
 
@@ -22,14 +23,19 @@ def read_hf_token(environ, get_secret):
     for name in HF_SECRET_NAMES:
         if environ.get(name):
             return environ[name], 'environment:' + name
+    errors = []
     for name in HF_SECRET_NAMES:
         try:
             token = get_secret(name)
-        except Exception:
+        except Exception as exc:
+            message = re.sub(r'hf_[A-Za-z0-9]+', '[REDACTED]', str(exc))
+            message = re.sub(r'(https?://[^\s?]+)\?\S+', r'\1?[REDACTED]', message)
+            errors.append(name + ': ' + type(exc).__name__ + ': ' + message[:350])
             continue
         if token:
             return token, 'Kaggle secret:' + name
-    raise ValueError('Enable HF_TOKEN, HF_Token or big_data_project in this notebook Secrets panel')
+    details = '; '.join(errors) if errors else 'No value was returned for the accepted secret labels'
+    raise ValueError('Kaggle secret retrieval failed: ' + details)
 
 
 def checksum(path):
