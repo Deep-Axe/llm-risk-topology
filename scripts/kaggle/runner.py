@@ -14,6 +14,8 @@ REPOSITORY = 'https://github.com/Deep-Axe/llm-risk-topology.git'
 MODELS = ['mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta']
 SPLITS = ['development', 'validation']
 HF_SECRET_NAMES = ('HF_TOKEN', 'HF_Token', 'big_data_project')
+INFERENCE_PYTHON = '3.11.14'
+UV_VERSION = '0.9.18'
 
 
 def read_hf_token(environ, get_secret):
@@ -53,14 +55,28 @@ def install_payload(dataset, project):
             raise ValueError('Dataset member checksum mismatch')
 
 
+def create_inference_environment(working):
+    environment = working / 'inference-env'
+    if environment.exists():
+        return environment / 'bin/python'
+    bootstrap = working / 'uv-bootstrap'
+    subprocess.run([sys.executable, '-m', 'pip', 'install', '--target', str(bootstrap),
+                    'uv==' + UV_VERSION], check=True)
+    bootstrap_env = dict(os.environ)
+    bootstrap_env['PYTHONPATH'] = str(bootstrap)
+    bootstrap_env['UV_PYTHON_INSTALL_DIR'] = str(working / 'managed-python')
+    uv = [sys.executable, '-m', 'uv']
+    subprocess.run([*uv, 'python', 'install', INFERENCE_PYTHON], env=bootstrap_env, check=True)
+    subprocess.run([*uv, 'venv', '--python', INFERENCE_PYTHON, '--seed', str(environment)],
+                   env=bootstrap_env, check=True)
+    return environment / 'bin/python'
+
+
 def main():
     if CODE_REVISION == 'SET_BY_PREPARE':
         raise ValueError('Stage the kernel with scripts/kaggle/prepare.py first')
-    if not (3, 9) <= sys.version_info[:2] <= (3, 12):
-        raise ValueError('The pinned vLLM environment requires Python 3.9–3.12')
     working = Path('/kaggle/working')
     project = working / 'project'
-    environment = working / 'inference-env'
     outputs = working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
     get_secret = lambda name: None
@@ -83,9 +99,9 @@ def main():
     if len(matches) != 1:
         raise ValueError('Attach exactly one prepared pilot_v5 dataset')
     install_payload(matches[0], project)
-    if not environment.exists():
-        subprocess.run([sys.executable, '-m', 'venv', str(environment)], check=True)
-    python = str(environment / 'bin/python')
+    python = str(create_inference_environment(working))
+    subprocess.run([python, '-c', 'import platform; print("Inference Python:", platform.python_version()); '
+                    f'assert platform.python_version() == "{INFERENCE_PYTHON}"'], check=True)
     subprocess.run([python, '-m', 'pip', 'install', '-r', 'scripts/kaggle/requirements.txt'],
                    cwd=project, check=True)
     with (outputs / 'pip_freeze.txt').open('w') as stream:
