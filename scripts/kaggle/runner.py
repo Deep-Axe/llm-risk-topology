@@ -2,7 +2,7 @@
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import shutil
 import subprocess
@@ -64,19 +64,61 @@ def checksum(path):
 def install_payload(dataset, project):
     metadata = json.loads((dataset / 'payload.json').read_text())
     archive = dataset / 'pilot_v5.zip'
-    if checksum(archive) != metadata['archive_sha256']:
-        raise ValueError('Dataset ZIP checksum mismatch')
-    with zipfile.ZipFile(archive) as stream:
-        if set(stream.namelist()) != set(metadata['files']):
-            raise ValueError('Dataset ZIP member list mismatch')
-        for member in stream.infolist():
-            target = (project / member.filename).resolve()
-            if not target.is_relative_to(project.resolve()) or member.filename.startswith('/'):
-                raise ValueError('ZIP member escapes the project')
-        stream.extractall(project)
+    targets = {}
+    for name in metadata['files']:
+        target = (project / name).resolve()
+        if (not target.is_relative_to(project.resolve()) or
+                PureWindowsPath(name).drive or '\\' in name or
+                PurePosixPath(name).is_absolute() or '..' in PurePosixPath(name).parts):
+            raise ValueError('Dataset member escapes the project')
+        targets[name] = target
+    if archive.is_file():
+        if checksum(archive) != metadata['archive_sha256']:
+            raise ValueError('Dataset ZIP checksum mismatch')
+        with zipfile.ZipFile(archive) as stream:
+            if (set(stream.namelist()) != set(metadata['files']) or
+                    len(stream.namelist()) != len(metadata['files'])):
+                raise ValueError('Dataset ZIP member list mismatch')
+            # Verify every member before writing any files into the checkout.
+            for name, expected in metadata['files'].items():
+                with stream.open(name) as member:
+                    if hashlib.file_digest(member, 'sha256').hexdigest() != expected:
+                        raise ValueError('Dataset member checksum mismatch')
+            for name, target in targets.items():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with stream.open(name) as source, target.open('wb') as destination:
+                    shutil.copyfileobj(source, destination)
+        layout = 'ZIP'
+    else:
+        root = (dataset / 'pilot_v5').resolve()
+        sources = {}
+        for name, expected in metadata['files'].items():
+            source = (root / name).resolve()
+            if not source.is_relative_to(root):
+                raise ValueError('Dataset member escapes the extracted folder')
+            if not source.is_file():
+                raise ValueError('Missing extracted dataset member: ' + name)
+            if checksum(source) != expected:
+                raise ValueError('Dataset member checksum mismatch')
+            sources[name] = source
+        for name, target in targets.items():
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(sources[name], target)
+        layout = 'extracted folder'
     for name, expected in metadata['files'].items():
         if checksum(project / name) != expected:
             raise ValueError('Dataset member checksum mismatch')
+    print('Verified prompt payload:', layout, len(targets), 'files', flush=True)
+
+
+def load_wildguard_token():
+    get_secret = lambda name: None
+    if not any(os.environ.get(name) for name in HF_SECRET_NAMES):
+        from kaggle_secrets import UserSecretsClient
+        get_secret = UserSecretsClient().get_secret
+    token, token_source = read_hf_token(os.environ, get_secret)
+    os.environ['HF_TOKEN'] = token
+    print('Hugging Face credential source:', token_source, flush=True)
 
 
 def create_inference_environment(working):
@@ -104,13 +146,6 @@ def main():
     outputs = working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
     check_network()
-    get_secret = lambda name: None
-    if not any(os.environ.get(name) for name in HF_SECRET_NAMES):
-        from kaggle_secrets import UserSecretsClient
-        get_secret = UserSecretsClient().get_secret
-    token, token_source = read_hf_token(os.environ, get_secret)
-    print('Hugging Face credential source:', token_source)
-    os.environ['HF_TOKEN'] = token
     os.environ['HF_HOME'] = '/kaggle/temp/llm-risk-hf'
     os.environ['VLLM_USE_V1'] = '0'
     os.environ['VLLM_ATTENTION_BACKEND'] = 'XFORMERS'
@@ -120,7 +155,8 @@ def main():
         subprocess.run(['git', 'clone', '--no-checkout', REPOSITORY, str(project)], check=True)
     subprocess.run(['git', 'checkout', '--detach', CODE_REVISION], cwd=project, check=True)
     markers = list(Path('/kaggle/input').rglob('payload.json'))
-    matches = [path.parent for path in markers if (path.parent / 'pilot_v5.zip').exists()]
+    matches = [path.parent for path in markers
+               if (path.parent / 'pilot_v5.zip').is_file() or (path.parent / 'pilot_v5').is_dir()]
     if len(matches) != 1:
         raise ValueError('Attach exactly one prepared pilot_v5 dataset')
     install_payload(matches[0], project)
@@ -168,6 +204,15 @@ def main():
                 if checkpoint_cache.resolve().parent != cache.resolve():
                     raise ValueError('Unexpected cache path')
                 shutil.rmtree(checkpoint_cache)
+        try:
+            load_wildguard_token()
+        except Exception as exc:
+            (outputs / 'pipeline_status.json').write_text(json.dumps({
+                'status': 'awaiting_wildguard_token',
+                'public_assistant_runs': [str(run) for run in runs],
+            }))
+            raise RuntimeError('Public assistant generation and refusal-rule labels are saved. '
+                               'Attach a Hugging Face secret before WildGuard labeling.') from exc
         for index, run in enumerate(runs):
             command(['python/evaluate_responses.py', 'label', '--run', str(run),
                      '--labeler', 'wildguard', '--tensor-parallel', '2'], f'wildguard_{index}')
