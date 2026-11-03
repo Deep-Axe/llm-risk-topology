@@ -16,7 +16,7 @@ def prepare(output, revision, owner):
                    cwd=ROOT, check=True)
     output.mkdir(parents=True, exist_ok=False)
     runner = (ROOT / 'scripts/kaggle/wildguard_runner.py').read_text(encoding='utf-8').replace(
-        "CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{revision}'")
+        "CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{revision}'", 1)
     notebook = {'nbformat': 4, 'nbformat_minor': 5, 'metadata': {
         'kernelspec': {'display_name': 'Python 3', 'language': 'python', 'name': 'python3'}},
         'cells': [
