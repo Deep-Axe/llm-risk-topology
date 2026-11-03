@@ -98,6 +98,80 @@ class KagglePayloadTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'escapes'):
                 RUNNER.install_payload(dataset, project)
 
+    def test_extracted_payload_keeps_all_file_checks(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, project = Path(tmp) / 'dataset', Path(tmp) / 'project'
+            dataset.mkdir()
+            self.payload(dataset)
+            with zipfile.ZipFile(dataset / 'pilot_v5.zip') as archive:
+                archive.extractall(dataset / 'pilot_v5')
+            (dataset / 'pilot_v5.zip').unlink()
+            RUNNER.install_payload(dataset, project)
+            name = 'data/processed/prompts/pilot_v5/example.json'
+            self.assertEqual((project / name).read_text(), 'fixture')
+            (dataset / 'pilot_v5' / name).write_text('corrupted')
+            with self.assertRaisesRegex(ValueError, 'member checksum'):
+                RUNNER.install_payload(dataset, Path(tmp) / 'untouched')
+            self.assertFalse((Path(tmp) / 'untouched').exists())
+            (dataset / 'pilot_v5' / name).unlink()
+            with self.assertRaisesRegex(ValueError, 'Missing extracted'):
+                RUNNER.install_payload(dataset, project)
+
+    def test_extracted_traversal_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dataset, project = Path(tmp) / 'dataset', Path(tmp) / 'project'
+            dataset.mkdir()
+            self.payload(dataset, '../outside.json')
+            (dataset / 'pilot_v5.zip').unlink()
+            with self.assertRaisesRegex(ValueError, 'escapes'):
+                RUNNER.install_payload(dataset, project)
+
+    def test_both_assistants_finish_before_missing_secret_stops_wildguard(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            working, inputs = root / 'working', root / 'input'
+            working.mkdir()
+            inputs.mkdir()
+            dataset = inputs / 'dataset'
+            dataset.mkdir()
+            self.payload(dataset)
+            events = []
+
+            def fake_run(args, **kwargs):
+                if 'python/generate_responses.py' in args:
+                    model = args[args.index('--model') + 1]
+                    events.append(('generate', model))
+                    run = working / 'project/data/processed/responses/run' / str(len(events))
+                    run.mkdir(parents=True)
+                    (run / 'run.bundle.json').write_text(json.dumps({'run_manifests': [{
+                        'runtime': {'engine': 'vllm', 'configuration': {'model_id': model}}
+                    }]}))
+                if '--labeler' in args:
+                    events.append(('label', args[args.index('--labeler') + 1]))
+
+            def missing_token():
+                events.append(('secret', None))
+                raise ValueError('unavailable')
+
+            def mapped_path(value):
+                return {'/kaggle/working': working, '/kaggle/input': inputs}.get(value, Path(value))
+
+            with patch.object(RUNNER, 'Path', side_effect=mapped_path), \
+                    patch.object(RUNNER, 'CODE_REVISION', 'synthetic'), \
+                    patch.object(RUNNER, 'check_network'), \
+                    patch.object(RUNNER, 'create_inference_environment', return_value=root / 'python'), \
+                    patch.object(RUNNER.subprocess, 'run', side_effect=fake_run), \
+                    patch.object(RUNNER, 'load_wildguard_token', side_effect=missing_token), \
+                    patch.dict(RUNNER.os.environ, {'HF_HOME': str(root / 'hf')}):
+                with self.assertRaisesRegex(RuntimeError, 'Public assistant generation'):
+                    RUNNER.main()
+            self.assertEqual(events, [('generate', RUNNER.MODELS[0]), ('label', 'refusal_rules'),
+                                      ('generate', RUNNER.MODELS[1]), ('label', 'refusal_rules'),
+                                      ('secret', None)])
+            self.assertTrue((working / 'pilot_outputs.tar.gz').is_file())
+            status = json.loads((working / 'pilot_outputs/pipeline_status.json').read_text())
+            self.assertEqual(status['status'], 'awaiting_wildguard_token')
+
 
 if __name__ == '__main__':
     unittest.main()
