@@ -45,7 +45,10 @@ def index_groups(group_ids):
     sorted_ids = group_ids[order]
     if sorted_ids.size == 0:
         return np.array([], dtype=int), order, np.array([], dtype=int), np.array([], dtype=int)
-    change = np.flatnonzero(np.diff(sorted_ids)) + 1
+    if sorted_ids.dtype.kind in 'iu':
+        change = np.flatnonzero(np.diff(sorted_ids)) + 1
+    else:
+        change = np.flatnonzero(sorted_ids[1:] != sorted_ids[:-1]) + 1
     starts = np.r_[0, change]
     ends = np.r_[change, sorted_ids.size]
     ids = sorted_ids[starts]
