@@ -13,6 +13,21 @@ CODE_REVISION = 'SET_BY_PREPARE'
 REPOSITORY = 'https://github.com/Deep-Axe/llm-risk-topology.git'
 MODELS = ['mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta']
 SPLITS = ['development', 'validation']
+HF_SECRET_NAMES = ('HF_TOKEN', 'HF_Token', 'big_data_project')
+
+
+def read_hf_token(environ, get_secret):
+    for name in HF_SECRET_NAMES:
+        if environ.get(name):
+            return environ[name], 'environment:' + name
+    for name in HF_SECRET_NAMES:
+        try:
+            token = get_secret(name)
+        except Exception:
+            continue
+        if token:
+            return token, 'Kaggle secret:' + name
+    raise ValueError('Enable HF_TOKEN, HF_Token or big_data_project in this notebook Secrets panel')
 
 
 def checksum(path):
@@ -48,12 +63,12 @@ def main():
     environment = working / 'inference-env'
     outputs = working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
-    token = os.environ.get('HF_TOKEN')
-    if not token:
+    get_secret = lambda name: None
+    if not any(os.environ.get(name) for name in HF_SECRET_NAMES):
         from kaggle_secrets import UserSecretsClient
-        token = UserSecretsClient().get_secret('HF_TOKEN')
-    if not token:
-        raise ValueError('Set the HF_TOKEN Kaggle secret before starting')
+        get_secret = UserSecretsClient().get_secret
+    token, token_source = read_hf_token(os.environ, get_secret)
+    print('Hugging Face credential source:', token_source)
     os.environ['HF_TOKEN'] = token
     os.environ['HF_HOME'] = '/kaggle/temp/llm-risk-hf'
     os.environ['VLLM_USE_V1'] = '0'
