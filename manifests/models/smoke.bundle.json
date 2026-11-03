@@ -1,0 +1,22 @@
+{
+  "model_manifests": [
+    {
+      "manifest_id": "models_435811c656c66d7ce72078144fbf8e04ec684b74e3f55cd99da2ee7f46e346e2",
+      "models": [
+        {
+          "chat_template_sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+          "family": "Qwen2.5",
+          "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+          "precision": "float16",
+          "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+        }
+      ],
+      "schema_version": "1.0.0",
+      "stage": "pilot",
+      "status": "frozen"
+    }
+  ]
+}

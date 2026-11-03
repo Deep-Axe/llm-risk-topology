@@ -1,0 +1,32 @@
+{
+  "model_manifests": [
+    {
+      "manifest_id": "models_948ea8679704afd8444d3b648246b7084d35d979eaf6e3568dae7866aafa3173",
+      "models": [
+        {
+          "chat_template_sha256": "796853172235ab3aaa4810013ddfe2eab481bda3306dad4f700c00d436eed596",
+          "family": "Mistral-7B-v0.1",
+          "model_id": "mistralai/Mistral-7B-Instruct-v0.1",
+          "precision": "float16",
+          "revision": "ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca"
+        },
+        {
+          "chat_template_sha256": "66291cf0045c2425a3a667cf3cbb7af2b11f09e025c02f97245323ab79119362",
+          "family": "Mistral-7B-v0.1",
+          "model_id": "HuggingFaceH4/zephyr-7b-beta",
+          "precision": "float16",
+          "revision": "892b3d7a7b1cf10c7a701c60881cd93df615734c",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "892b3d7a7b1cf10c7a701c60881cd93df615734c"
+        }
+      ],
+      "schema_version": "1.0.0",
+      "stage": "pilot",
+      "status": "frozen"
+    }
+  ]
+}

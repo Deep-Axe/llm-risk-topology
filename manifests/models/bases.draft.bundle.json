@@ -1,0 +1,42 @@
+{
+  "model_manifests": [
+    {
+      "manifest_id": "models_be0129629da54a44776ba86fcb637787ff5b4af5c7886b933b6bbd7ee7419085",
+      "models": [
+        {
+          "chat_template_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "family": "Llama-3.1",
+          "model_id": "meta-llama/Llama-3.1-8B",
+          "precision": "float16",
+          "revision": "d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
+          "role": "base_diagnostic",
+          "system_policy": "base_completion_separate_protocol_required",
+          "tokenizer_revision": "d04e592bb4f6aa9cfee91e2e20afa771667e1d4b"
+        },
+        {
+          "chat_template_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "family": "Mistral-7B-v0.1",
+          "model_id": "mistralai/Mistral-7B-v0.1",
+          "precision": "float16",
+          "revision": "27d67f1b5f57dc0953326b2601d68371d40ea8da",
+          "role": "base_diagnostic",
+          "system_policy": "base_completion_separate_protocol_required",
+          "tokenizer_revision": "27d67f1b5f57dc0953326b2601d68371d40ea8da"
+        },
+        {
+          "chat_template_sha256": "44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5",
+          "family": "Qwen2.5",
+          "model_id": "Qwen/Qwen2.5-7B",
+          "precision": "float16",
+          "revision": "d149729398750b98c0af14eb82c78cfe92750796",
+          "role": "base_diagnostic",
+          "system_policy": "base_completion_separate_protocol_required",
+          "tokenizer_revision": "d149729398750b98c0af14eb82c78cfe92750796"
+        }
+      ],
+      "schema_version": "1.0.0",
+      "stage": "pilot",
+      "status": "draft"
+    }
+  ]
+}

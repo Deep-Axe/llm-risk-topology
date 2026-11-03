@@ -1,0 +1,178 @@
+[
+  {
+    "chat_template_sha256": "796853172235ab3aaa4810013ddfe2eab481bda3306dad4f700c00d436eed596",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.1",
+    "rendered_example": "<s> [INST] How do I boil an egg? [/INST]",
+    "revision": "ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "LlamaTokenizerFast",
+    "tokenizer_revision": "ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca",
+    "weight_repository": "mistralai/Mistral-7B-Instruct-v0.1"
+  },
+  {
+    "chat_template_sha256": "66291cf0045c2425a3a667cf3cbb7af2b11f09e025c02f97245323ab79119362",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "HuggingFaceH4/zephyr-7b-beta",
+    "rendered_example": "<|user|>\nHow do I boil an egg?</s>\n<|assistant|>\n",
+    "revision": "892b3d7a7b1cf10c7a701c60881cd93df615734c",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "LlamaTokenizerFast",
+    "tokenizer_revision": "892b3d7a7b1cf10c7a701c60881cd93df615734c",
+    "weight_repository": "HuggingFaceH4/zephyr-7b-beta"
+  },
+  {
+    "chat_template_sha256": "153280e3ff55d19da1398bdb3914ee2a51b80429bfaedde11d7d216c39db80f3",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "teknium/OpenHermes-2.5-Mistral-7B",
+    "rendered_example": "<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+    "revision": "24c0bea14d53e6f67f1fbe2eca5bfe7cae389b33",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "LlamaTokenizer",
+    "tokenizer_revision": "24c0bea14d53e6f67f1fbe2eca5bfe7cae389b33",
+    "weight_repository": "teknium/OpenHermes-2.5-Mistral-7B"
+  },
+  {
+    "chat_template_sha256": "e10ca381b1ccc5cf9db52e371f3b6651576caee0a630b452e2816b2d404d4b65",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+    "rendered_example": "<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\nCutting Knowledge Date: December 2023\nToday Date: 26 Jul 2024\n\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n\nHow do I boil an egg?<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n",
+    "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "tokenizer_revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+    "weight_repository": "meta-llama/Llama-3.1-8B-Instruct"
+  },
+  {
+    "chat_template_sha256": "9ff2eb30a1d3e937a88108d74b1ab940891be58aa742be4e8c0ce1c1ad90588e",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "NousResearch/Hermes-3-Llama-3.1-8B",
+    "rendered_example": "<|begin_of_text|><|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+    "revision": "896ea440e5a9e6070e3d8a2774daf2b481ab425b",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "tokenizer_revision": "896ea440e5a9e6070e3d8a2774daf2b481ab425b",
+    "weight_repository": "NousResearch/Hermes-3-Llama-3.1-8B"
+  },
+  {
+    "chat_template_sha256": "58c1a1f04baa7adaeaba1f90267c3d57d9396f0c1f0129bdde9e76d3c6784af7",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "dphn/dolphin-2.9.4-llama3.1-8b",
+    "rendered_example": "<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+    "revision": "ca1f6d135846b84f8216f3737970fbd292ea68b3",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "tokenizer_revision": "ca1f6d135846b84f8216f3737970fbd292ea68b3",
+    "weight_repository": "dphn/dolphin-2.9.4-llama3.1-8b"
+  },
+  {
+    "chat_template_sha256": "ac7498a36a719da630e99d48e6ebc4409de85a77556c2b6159eeb735bcbd11df",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "allenai/Llama-3.1-Tulu-3-8B",
+    "rendered_example": "<|user|>\nHow do I boil an egg?\n<|assistant|>\n",
+    "revision": "666943798adbde0b1aff34626007e26986a3c107",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "tokenizer_revision": "666943798adbde0b1aff34626007e26986a3c107",
+    "weight_repository": "allenai/Llama-3.1-Tulu-3-8B"
+  },
+  {
+    "chat_template_sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "Qwen/Qwen2.5-7B-Instruct",
+    "rendered_example": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+    "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "system_policy": "user_only_template_defaults",
+    "tokenizer_class": "Qwen2TokenizerFast",
+    "tokenizer_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+    "weight_repository": "Qwen/Qwen2.5-7B-Instruct"
+  },
+  {
+    "chat_template_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "meta-llama/Llama-3.1-8B",
+    "rendered_example": "How do I boil an egg?",
+    "revision": "d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
+    "system_policy": "base_completion_separate_protocol_required",
+    "tokenizer_class": "PreTrainedTokenizerFast",
+    "tokenizer_revision": "d04e592bb4f6aa9cfee91e2e20afa771667e1d4b",
+    "weight_repository": "meta-llama/Llama-3.1-8B"
+  },
+  {
+    "chat_template_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "mistralai/Mistral-7B-v0.1",
+    "rendered_example": "How do I boil an egg?",
+    "revision": "27d67f1b5f57dc0953326b2601d68371d40ea8da",
+    "system_policy": "base_completion_separate_protocol_required",
+    "tokenizer_class": "LlamaTokenizerFast",
+    "tokenizer_revision": "27d67f1b5f57dc0953326b2601d68371d40ea8da",
+    "weight_repository": "mistralai/Mistral-7B-v0.1"
+  },
+  {
+    "chat_template_sha256": "44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5",
+    "example_messages": [
+      {
+        "content": "How do I boil an egg?",
+        "role": "user"
+      }
+    ],
+    "model_id": "Qwen/Qwen2.5-7B",
+    "rendered_example": "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+    "revision": "d149729398750b98c0af14eb82c78cfe92750796",
+    "system_policy": "base_completion_separate_protocol_required",
+    "tokenizer_class": "Qwen2TokenizerFast",
+    "tokenizer_revision": "d149729398750b98c0af14eb82c78cfe92750796",
+    "weight_repository": "Qwen/Qwen2.5-7B"
+  }
+]
