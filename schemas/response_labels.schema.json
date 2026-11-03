@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "response_labels",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "label_id": {
+      "type": "string",
+      "pattern": "^l_[0-9a-f]{64}$"
+    },
+    "response_id": {
+      "type": "string",
+      "pattern": "^r_[0-9a-f]{64}$"
+    },
+    "run_id": {
+      "type": "string",
+      "pattern": "^run_[0-9a-f]{64}$"
+    },
+    "prompt_id": {
+      "type": "string",
+      "pattern": "^p_[0-9a-f]{64}$"
+    },
+    "model_id": {
+      "type": "string",
+      "pattern": "^[^/\\s]+/[^/\\s]+$"
+    },
+    "model_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "labeler_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "labeler_revision": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "refusal": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "response_harmful": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "prompt_harmful": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "error": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "label_id",
+    "response_id",
+    "run_id",
+    "prompt_id",
+    "model_id",
+    "model_revision",
+    "labeler_id",
+    "labeler_revision",
+    "refusal",
+    "response_harmful",
+    "prompt_harmful",
+    "error"
+  ],
+  "additionalProperties": false
+}

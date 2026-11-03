@@ -102,6 +102,9 @@
               "type": "null"
             }
           ]
+        },
+        "configuration": {
+          "type": "object"
         }
       },
       "required": [

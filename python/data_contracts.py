@@ -47,6 +47,10 @@ def response_id(run_id, prompt, model, revision, repetition):
     return "r_" + digest([VERSION, run_id, prompt, model, revision, repetition])
 
 
+def label_id(response, labeler, revision):
+    return "l_" + digest([VERSION, response, labeler, revision])
+
+
 def assign_groups(prompt_anchors):
     """Union records sharing ANY explicit anchor, including cross-source duplicates.
 
@@ -129,7 +133,16 @@ CONTRACTS = {
         "status": {"enum": ["success", "failed"]}, "text": nullable({"type": "string"}),
         "error": nullable(S), "input_tokens": nullable(N), "output_tokens": nullable(N),
         "input_truncated": {"type": "boolean"}, "output_truncated": {"type": "boolean"},
-        "finish_reason": nullable(S)}),
+        "finish_reason": nullable(S), "rendered_prompt": nullable({"type": "string"}),
+        "raw_input_tokens": nullable(N), "input_token_ids": array(N)},
+        required=['schema_version', 'response_id', 'run_id', 'prompt_id', 'model_id', 'model_revision',
+                  'repetition', 'status', 'text', 'error', 'input_tokens', 'output_tokens',
+                  'input_truncated', 'output_truncated', 'finish_reason']),
+    "response_labels": obj({**COMMON, "label_id": identity("l"), "response_id": identity("r"),
+        "run_id": identity("run"), "prompt_id": identity("p"), "model_id": MODEL,
+        "model_revision": REV, "labeler_id": S, "labeler_revision": nullable(S),
+        "refusal": nullable({"type": "boolean"}), "response_harmful": nullable({"type": "boolean"}),
+        "prompt_harmful": nullable({"type": "boolean"}), "error": nullable(S)}),
     "source_manifests": obj({**COMMON, "manifest_id": identity("sources"), "status": STATUS, "sources": array(SOURCE, 1)}),
     "model_manifests": obj({**COMMON, "manifest_id": identity("models"), "status": STATUS,
         "stage": {"enum": ["pilot", "8", "25", "100"]}, "models": array(MODEL_ENTRY, 1)}),
@@ -145,7 +158,8 @@ CONTRACTS = {
             "temperature": {"type": "number", "minimum": 0}, "top_p": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
             "max_input_tokens": {"type": "integer", "minimum": 1}, "max_new_tokens": {"type": "integer", "minimum": 1},
             "repetitions": {"type": "integer", "minimum": 1}}),
-        "runtime": obj({"engine": nullable(S), "engine_version": nullable(S), "hardware": nullable(S)}),
+        "runtime": obj({"engine": nullable(S), "engine_version": nullable(S), "hardware": nullable(S),
+                        "configuration": ANY_OBJECT}, required=['engine', 'engine_version', 'hardware']),
         "output_path": S}),
 }
 
@@ -169,7 +183,9 @@ def validate_bundle(bundle):
             raise ValueError(f"{kind} must be an array")
         validator = Draft202012Validator(CONTRACTS[kind])
         seen = set()
-        key = "run_id" if kind == "run_manifests" else {"prompts": "prompt_id", "responses": "response_id", "metadata_edges": "edge_id"}.get(kind, "manifest_id")
+        key = "run_id" if kind == "run_manifests" else {
+            "prompts": "prompt_id", "responses": "response_id", "metadata_edges": "edge_id",
+            "response_labels": "label_id"}.get(kind, "manifest_id")
         for record in records:
             validator.validate(record)
             if record[key] in seen:
@@ -249,6 +265,11 @@ def validate_bundle(bundle):
                 raise ValueError('Frozen runs require runtime details')
             if any(table.get(r[key], {}).get('status') != 'frozen' for table, key in [(models, 'model_manifest_id'), (manifests, 'prompt_manifest_id')]):
                 raise ValueError('Frozen run requires frozen model and prompt manifests')
+            subset = r['runtime'].get('configuration', {}).get('selection', {}).get('prompt_ids')
+            if subset is not None:
+                available = manifests[r['prompt_manifest_id']]['prompt_ids']
+                if not subset or len(set(subset)) != len(subset) or not set(subset) <= set(available):
+                    raise ValueError('Run subset must select unique prompts from its frozen prompt manifest')
     for r in bundle.get('responses', []):
         run = runs.get(r['run_id'])
         if not run or run['status'] != 'frozen':
@@ -258,10 +279,47 @@ def validate_bundle(bundle):
             raise ValueError('Response checkpoint not in run panel')
         if r['prompt_id'] not in manifests[run['prompt_manifest_id']]['prompt_ids'] or r['repetition'] >= run['generation']['repetitions']:
             raise ValueError('Response prompt/repetition outside run')
+        config = run['runtime'].get('configuration', {})
+        if 'selection' in config and r['prompt_id'] not in config['selection']['prompt_ids']:
+            raise ValueError('Response falls outside the recorded run subset')
+        if config.get('model_id', r['model_id']) != r['model_id']:
+            raise ValueError('Response differs from the recorded run model')
         if r['response_id'] != response_id(r['run_id'], r['prompt_id'], r['model_id'], r['model_revision'], r['repetition']):
             raise ValueError('Invalid response identity')
         if (r['status'] == 'success' and (r['text'] is None or r['error'] is not None)) or (r['status'] == 'failed' and (r['text'] is not None or r['error'] is None)):
             raise ValueError('Inconsistent response status/text/error')
+        if 'input_token_ids' in r and r['input_tokens'] is not None:
+            if len(r['input_token_ids']) != r['input_tokens']:
+                raise ValueError('Input token IDs do not match input token count')
+        if r.get('raw_input_tokens') is not None and r['input_tokens'] is not None:
+            if r['input_tokens'] > r['raw_input_tokens']:
+                raise ValueError('Input count exceeds the rendered input count')
+            if r['input_truncated'] != (r['raw_input_tokens'] > r['input_tokens']):
+                raise ValueError('Input truncation flag differs from recorded counts')
+    responses = {r['response_id']: r for r in bundle.get('responses', [])}
+    for label in bundle.get('response_labels', []):
+        response = responses.get(label['response_id'])
+        if response is None:
+            raise ValueError('Label references a missing response')
+        for field in ['run_id', 'prompt_id', 'model_id', 'model_revision']:
+            if label[field] != response[field]:
+                raise ValueError('Label provenance differs from its response')
+        if label['label_id'] != label_id(label['response_id'], label['labeler_id'],
+                                         label['labeler_revision']):
+            raise ValueError('Invalid label identity')
+        values = [label[field] for field in ['refusal', 'response_harmful', 'prompt_harmful']]
+        if label['error'] is not None and any(value is not None for value in values):
+            raise ValueError('Failed labels must have null outcomes')
+        if label['error'] is None and all(value is None for value in values):
+            raise ValueError('Successful labels need at least one outcome')
+        if response['status'] == 'failed' and label['error'] is None:
+            raise ValueError('Failed responses cannot receive successful labels')
+        if label['labeler_id'] == 'wildguard' and label['error'] is None:
+            if any(value is None for value in values):
+                raise ValueError('WildGuard must label all three outcomes or return an error')
+        if label['labeler_id'] == 'refusal_rules':
+            if label['response_harmful'] is not None or label['prompt_harmful'] is not None:
+                raise ValueError('Refusal rules cannot label harmfulness')
 
 
 def main():
@@ -275,7 +333,9 @@ def main():
         directory.mkdir(exist_ok=True)
         for name, schema in CONTRACTS.items():
             Draft202012Validator.check_schema(schema)
-            (directory / (name + '.schema.json')).write_text(json.dumps({'$schema': 'https://json-schema.org/draft/2020-12/schema', 'title': name, **schema}, indent=2), encoding='utf-8')
+            (directory / (name + '.schema.json')).write_text(
+                json.dumps({'$schema': 'https://json-schema.org/draft/2020-12/schema',
+                            'title': name, **schema}, indent=2), encoding='utf-8', newline='\n')
         print(f'Exported {len(CONTRACTS)} versioned contracts.')
     else:
         if args.path is None:
@@ -292,8 +352,13 @@ def verify_artifacts(bundle, root=ROOT):
         for artifact in manifest['artifacts']:
             if artifact['sha256'] is None:
                 raise ValueError('Cannot verify artifact without checksum')
-            path = (root / artifact['path']).resolve()
-            if not path.is_relative_to(root.resolve()):
+            relative = Path(artifact['path'])
+            if not relative.parts or relative.is_absolute() or relative.drive or '..' in relative.parts:
+                raise ValueError('Artifact path must be relative without traversal')
+            path = (root / relative).resolve()
+            # Only the named data tree may point outside a worktree through its junction.
+            boundary = (root / 'data').resolve() if relative.parts[0] == 'data' else root.resolve()
+            if not path.is_relative_to(boundary):
                 raise ValueError('Local artifact must stay inside project root')
             checksum = hashlib.sha256()
             with path.open('rb') as stream:

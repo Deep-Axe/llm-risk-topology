@@ -597,11 +597,10 @@ def wildguard_overlap(records, splits):
 
 
 def estimate_tokens(records):
-    from huggingface_hub import HfApi
     from transformers import AutoTokenizer
 
     model = 'mistralai/Mistral-7B-Instruct-v0.1'
-    revision = HfApi().model_info(model).sha
+    revision = 'ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca'
     tokenizer = AutoTokenizer.from_pretrained(model, revision=revision)
     raw, chat = [], []
     for row in records:

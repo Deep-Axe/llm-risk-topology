@@ -5,10 +5,11 @@ import sys
 import csv
 import tempfile
 import unittest
+from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'python'))
 from prepare_prompts import (prepare, json_records, sample_wild_file, extend_prepared,
-                             near_matches, load_prepared, word_grams, containment)
+                             near_matches, load_prepared, word_grams, containment, estimate_tokens)
 from data_contracts import canonical, validate_bundle, digest
 
 
@@ -18,6 +19,15 @@ def source(name, rows, config='train'):
 
 
 class PromptPreparationTest(unittest.TestCase):
+    def test_token_estimate_uses_the_frozen_tokenizer_revision(self):
+        tokenizer = MagicMock()
+        tokenizer.encode.return_value = [1]
+        tokenizer.apply_chat_template.return_value = [1, 2]
+        with patch('transformers.AutoTokenizer.from_pretrained', return_value=tokenizer) as load:
+            estimate_tokens([{'prompt_id': 'synthetic', 'messages': [{'role': 'user', 'content': 'Hi'}]}])
+        load.assert_called_once_with('mistralai/Mistral-7B-Instruct-v0.1',
+                                     revision='ec5deb64f2c6e6fa90c1abf74a91d5c93a9669ca')
+
     def test_cross_source_duplicate_promotes_entire_pair_to_reserved_test(self):
         inputs = [source('OpenSafetyLab/Salad-Data', [{'qid': 1, 'baseq': 'Shared original', 'augq': 'Existing variant'}], 'attack_enhanced_set'),
                   source('paul-rottger/xstest', [{'id': 'x1', 'prompt': 'Shared original', 'label': 'safe'}])]
