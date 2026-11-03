@@ -129,6 +129,7 @@ def evaluate(run_folder, labeler, backend=None, batch_size=16):
             if raw_rows:
                 atomic_write(folder / f'raw-{store.next_index:06d}.jsonl', raw_rows, lines=True)
             store.append(labels)
+            print(f'{labeler}: {len(store.rows)}/{len(responses)} labels committed', flush=True)
         bundle = {**context, 'responses': list(responses.values()),
                   'response_labels': list(store.rows.values())}
         validate_bundle(bundle)
