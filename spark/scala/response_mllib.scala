@@ -22,11 +22,11 @@ try {
   for (model <- models) {
     val data = responses.filter(col("model_id") === model).cache()
     val n = data.count()
-    val lsh = new BucketedRandomProjectionLSH().setBucketLength(0.6).setNumHashTables(12).setSeed(42)
+    val lsh = new BucketedRandomProjectionLSH().setBucketLength(1.0).setNumHashTables(20).setSeed(42)
       .setInputCol("features").setOutputCol("hashes").fit(data)
     val hashed = lsh.transform(data).cache()
-    // Distance 1.0 is cosine 0.5; candidates beyond it are not useful as neighbors.
-    val candidates = lsh.approxSimilarityJoin(hashed, hashed, 1.0, "distance")
+    // Distance 1.4 is cosine 0.02, so the cutoff rarely removes one of the true k nearest neighbors.
+    val candidates = lsh.approxSimilarityJoin(hashed, hashed, 1.4, "distance")
       .select(col("datasetA.rid").as("src"), col("datasetB.rid").as("dst"), col("distance"))
       .filter(col("src") =!= col("dst"))
     val rank = Window.partitionBy("src").orderBy(col("distance"), col("dst"))
@@ -47,7 +47,7 @@ try {
     val silhouette = new ClusteringEvaluator().setFeaturesCol("features").setPredictionCol("cluster")
       .setDistanceMeasure("cosine").evaluate(assigned)
     assigned.select("response_id", "model_id", "prompt_id", "split", "source", "intent", "variant_type", "refusal",
-      "response_harmful", "cluster").write.mode("append").parquet(output + "/clusters")
+      "response_harmful", "refusal_rules", "cluster").write.mode("append").parquet(output + "/clusters")
     knn.join(data.select(col("rid").as("src"), col("response_id").as("src_response_id")), "src")
       .join(data.select(col("rid").as("dst"), col("response_id").as("dst_response_id")), "dst")
       .select(lit(model).as("model_id"), col("src_response_id"), col("dst_response_id"), col("distance"), col("rank"))

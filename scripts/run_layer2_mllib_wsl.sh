@@ -46,12 +46,13 @@ CREATE EXTERNAL TABLE ${T}_responses (response_id STRING, model_id STRING, promp
   refusal BOOLEAN, response_harmful BOOLEAN, prompt_harmful BOOLEAN, refusal_rules BOOLEAN, text_chars BIGINT)
   STORED AS PARQUET LOCATION '$LAYER2_HDFS/responses';
 CREATE EXTERNAL TABLE ${T}_clusters (response_id STRING, model_id STRING, prompt_id STRING, split STRING,
-  source STRING, intent STRING, variant_type STRING, refusal BOOLEAN, response_harmful BOOLEAN, cluster INT)
+  source STRING, intent STRING, variant_type STRING, refusal BOOLEAN, response_harmful BOOLEAN, refusal_rules BOOLEAN,
+  cluster INT)
   STORED AS PARQUET LOCATION '$LAYER2_OUTPUT/clusters';
 SELECT 'rates', model_id, source, intent, variant_type, COUNT(*),
-  ROUND(AVG(CAST(refusal AS INT)), 3), ROUND(AVG(CAST(response_harmful AS INT)), 3)
+  ROUND(AVG(CAST(COALESCE(refusal, refusal_rules) AS INT)), 3), ROUND(AVG(CAST(response_harmful AS INT)), 3)
   FROM ${T}_responses GROUP BY model_id, source, intent, variant_type ORDER BY model_id, source, intent, variant_type;
-SELECT 'cluster', model_id, cluster, COUNT(*), ROUND(AVG(CAST(refusal AS INT)), 3),
+SELECT 'cluster', model_id, cluster, COUNT(*), ROUND(AVG(CAST(COALESCE(refusal, refusal_rules) AS INT)), 3),
   ROUND(AVG(CAST(response_harmful AS INT)), 3)
   FROM ${T}_clusters GROUP BY model_id, cluster ORDER BY model_id, cluster;
 EOF
