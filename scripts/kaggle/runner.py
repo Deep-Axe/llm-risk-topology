@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import threading
+import time
 import urllib.error
 import urllib.request
 import zipfile
@@ -138,6 +140,54 @@ def create_inference_environment(working):
     return environment / 'bin/python'
 
 
+def stream_command(python, arguments, project, outputs, name, heartbeat_seconds=30):
+    """Keep persistent subprocess logs visible while a model loads or generates."""
+    log = outputs / (name + '.log')
+    started = time.monotonic()
+    finished = threading.Event()
+    print(f'[{name}] START; live log: {log}', flush=True)
+    with log.open('a', encoding='utf-8') as writer, log.open('r', encoding='utf-8', errors='replace') as reader:
+        reader.seek(0, 2)
+
+        def relay():
+            last_message = time.monotonic()
+            def emit(chunk):
+                chunk = re.sub(r'hf_[A-Za-z0-9]+', '[REDACTED]', chunk)
+                chunk = re.sub(r'(https?://[^\s?]+)\?\S+', r'\1?[REDACTED]', chunk)
+                print(f'[{name}] ' + chunk, end='' if chunk.endswith('\n') else '\n', flush=True)
+            while True:
+                chunk = reader.read()
+                if chunk:
+                    emit(chunk)
+                    last_message = time.monotonic()
+                now = time.monotonic()
+                if now - last_message >= heartbeat_seconds:
+                    print(f'[{name}] RUNNING: {now - started:.0f}s elapsed; '
+                          'waiting for subprocess output', flush=True)
+                    last_message = now
+                if finished.is_set():
+                    remaining = reader.read()
+                    if remaining:
+                        emit(remaining)
+                    return
+                finished.wait(min(0.5, heartbeat_seconds))
+
+        thread = threading.Thread(target=relay, daemon=True)
+        thread.start()
+        try:
+            subprocess.run([python, '-u', *arguments], cwd=project, stdout=writer,
+                           stderr=subprocess.STDOUT, check=True)
+        except BaseException:
+            print(f'[{name}] FAILED after {time.monotonic() - started:.1f}s; see {log}', flush=True)
+            raise
+        finally:
+            # The subprocess has closed its file descriptor, so drain its last output.
+            writer.flush()
+            finished.set()
+            thread.join()
+    print(f'[{name}] COMPLETE in {time.monotonic() - started:.1f}s', flush=True)
+
+
 def main():
     if CODE_REVISION == 'SET_BY_PREPARE':
         raise ValueError('Stage the kernel with scripts/kaggle/prepare.py first')
@@ -146,11 +196,17 @@ def main():
     outputs = working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
     check_network()
+    try:
+        load_wildguard_token()
+    except Exception as exc:
+        print('Hugging Face secret preflight:', type(exc).__name__,
+              '- public assistants will run; WildGuard needs an attached secret.', flush=True)
     os.environ['HF_HOME'] = '/kaggle/temp/llm-risk-hf'
     os.environ['VLLM_USE_V1'] = '0'
     os.environ['VLLM_ATTENTION_BACKEND'] = 'XFORMERS'
     os.environ['NCCL_P2P_DISABLE'] = '1'
     os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+    os.environ['PYTHONUNBUFFERED'] = '1'
     if not project.exists():
         subprocess.run(['git', 'clone', '--no-checkout', REPOSITORY, str(project)], check=True)
     subprocess.run(['git', 'checkout', '--detach', CODE_REVISION], cwd=project, check=True)
@@ -173,9 +229,7 @@ def main():
     runs = []
 
     def command(arguments, name):
-        with (outputs / (name + '.log')).open('a', encoding='utf-8') as stream:
-            subprocess.run([python, *arguments], cwd=project, stdout=stream,
-                           stderr=subprocess.STDOUT, check=True)
+        stream_command(python, arguments, project, outputs, name)
 
     try:
         command(['python/data_contracts.py', 'validate',

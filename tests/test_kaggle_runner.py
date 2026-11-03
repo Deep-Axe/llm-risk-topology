@@ -1,8 +1,12 @@
 """Check staged Kaggle payload hashes and extraction boundaries without network calls."""
 import hashlib
+import io
 import importlib.util
 import json
+from contextlib import redirect_stdout
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -18,6 +22,36 @@ PREPARE_SPEC.loader.exec_module(PREPARE)
 
 
 class KagglePayloadTest(unittest.TestCase):
+    def test_subprocess_progress_heartbeat_and_final_output_are_visible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            captured = io.StringIO()
+            program = ('import sys,time; print("loading weights",flush=True); '
+                       'time.sleep(0.3); print("batch 1 committed",file=sys.stderr,flush=True)')
+            with redirect_stdout(captured):
+                RUNNER.stream_command(sys.executable, ['-c', program], root, root,
+                                      'generation', heartbeat_seconds=0.05)
+            text = captured.getvalue()
+            for message in ['START', 'loading weights', 'RUNNING:', 'batch 1 committed', 'COMPLETE']:
+                self.assertIn(message, text)
+            log = (root / 'generation.log').read_text()
+            self.assertIn('loading weights', log)
+            self.assertIn('batch 1 committed', log)
+
+    def test_subprocess_failure_is_visible_and_preserves_exit_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            captured = io.StringIO()
+            with redirect_stdout(captured):
+                with self.assertRaises(subprocess.CalledProcessError) as raised:
+                    RUNNER.stream_command(sys.executable,
+                                          ['-c', 'import sys; print("fixture failure"); sys.exit(2)'],
+                                          root, root, 'failure', heartbeat_seconds=0.05)
+            self.assertEqual(raised.exception.returncode, 2)
+            self.assertIn('fixture failure', captured.getvalue())
+            self.assertIn('FAILED', captured.getvalue())
+            self.assertNotIn('COMPLETE', captured.getvalue())
+
     def test_notebook_payload_is_json_and_preserves_executable_source(self):
         source = 'print("synthetic notebook")\n'
         notebook = json.loads(json.dumps(PREPARE.make_notebook(source)))
@@ -165,7 +199,8 @@ class KagglePayloadTest(unittest.TestCase):
                     patch.dict(RUNNER.os.environ, {'HF_HOME': str(root / 'hf')}):
                 with self.assertRaisesRegex(RuntimeError, 'Public assistant generation'):
                     RUNNER.main()
-            self.assertEqual(events, [('generate', RUNNER.MODELS[0]), ('label', 'refusal_rules'),
+            self.assertEqual(events, [('secret', None),
+                                      ('generate', RUNNER.MODELS[0]), ('label', 'refusal_rules'),
                                       ('generate', RUNNER.MODELS[1]), ('label', 'refusal_rules'),
                                       ('secret', None)])
             self.assertTrue((working / 'pilot_outputs.tar.gz').is_file())
