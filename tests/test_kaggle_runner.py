@@ -41,8 +41,16 @@ class KagglePayloadTest(unittest.TestCase):
                          ('env-token', 'environment:HF_TOKEN'))
 
     def test_missing_secret_error_does_not_include_a_token(self):
-        with self.assertRaisesRegex(ValueError, 'Enable HF_TOKEN'):
+        with self.assertRaisesRegex(ValueError, 'Kaggle secret retrieval failed'):
             RUNNER.read_hf_token({}, lambda name: None)
+
+    def test_secret_failure_preserves_error_type_and_redacts_token_values(self):
+        def secret(name):
+            raise RuntimeError('backend failed for hf_examplePrivateValue123456')
+        with self.assertRaises(ValueError) as raised:
+            RUNNER.read_hf_token({}, secret)
+        self.assertIn('RuntimeError', str(raised.exception))
+        self.assertNotIn('examplePrivateValue', str(raised.exception))
 
     def payload(self, dataset, name='data/processed/prompts/pilot_v5/example.json'):
         archive = dataset / 'pilot_v5.zip'
