@@ -1,0 +1,16 @@
+{
+  "chat_template_sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+  "example_messages": [
+    {
+      "content": "How do I boil an egg?",
+      "role": "user"
+    }
+  ],
+  "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+  "rendered_example": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+  "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "system_policy": "user_only_template_defaults",
+  "tokenizer_class": "Qwen2TokenizerFast",
+  "tokenizer_revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+  "weight_repository": "Qwen/Qwen2.5-1.5B-Instruct"
+}

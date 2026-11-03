@@ -1,4 +1,4 @@
-"""Label the completed v7 assistants without regenerating their responses."""
+"""Reuse v7, generate the six validation assistants, and label all eight runs."""
 import hashlib
 import importlib.util
 import json
@@ -14,6 +14,71 @@ UPSTREAM_REVISION = '843b3d761170d20e60a6ad3113fd7710bd6ca0ef'
 UPSTREAM_VERSION = 7
 REPOSITORY = 'https://github.com/Deep-Axe/llm-risk-topology.git'
 MODELS = ('mistralai/Mistral-7B-Instruct-v0.1', 'HuggingFaceH4/zephyr-7b-beta')
+EXTRA_MODELS = ('Qwen/Qwen2.5-7B-Instruct', 'meta-llama/Llama-3.1-8B-Instruct',
+                'NousResearch/Hermes-3-Llama-3.1-8B', 'dphn/dolphin-2.9.4-llama3.1-8b',
+                'allenai/Llama-3.1-Tulu-3-8B', 'teknium/OpenHermes-2.5-Mistral-7B')
+
+
+def run_config(value=None):
+    config = {'models': list(EXTRA_MODELS), 'splits': ['validation'],
+              'model_manifest': 'manifests/models/scale6.bundle.json'}
+    config.update(value or {})
+    if (len(config['models']) != len(set(config['models'])) or
+            not set(config['models']).issubset(EXTRA_MODELS)):
+        raise ValueError('Extra models must be a unique subset of the registered six-model panel')
+    if config['splits'] != ['validation']:
+        raise ValueError('The registered scale-up generates validation only')
+    if config['model_manifest'] != 'manifests/models/scale6.bundle.json':
+        raise ValueError('Use the frozen six-model manifest')
+    return config
+
+
+def save_checkpoint(working, project, outputs, state):
+    from generate_responses import atomic_write
+    atomic_write(outputs / 'checkpoint.json', state)
+    temporary = working / 'pilot_outputs.tar.gz.tmp'
+    with tarfile.open(temporary, 'w:gz') as archive:
+        archive.add(outputs, arcname='pilot_outputs')
+        responses = project / 'data/processed/responses'
+        if responses.exists():
+            archive.add(responses, arcname='responses')
+    temporary.replace(working / 'pilot_outputs.tar.gz')
+    print('Checkpoint saved: /kaggle/working/pilot_outputs.tar.gz', state, flush=True)
+
+
+def generate_extra_runs(project, outputs, config, command, checkpoint, report):
+    panel = json.loads((project / config['model_manifest']).read_text())['model_manifests'][0]
+    if panel['status'] != 'frozen' or not set(config['models']).issubset(m['model_id'] for m in panel['models']):
+        raise ValueError('Extra-model manifest is not frozen or lacks a requested model')
+    runs = []
+    for index, model in enumerate(config['models']):
+        command(['python/generate_responses.py', '--prompts',
+                 'data/processed/prompts/pilot_v5/experiment.bundle.json', '--models', config['model_manifest'],
+                 '--model', model, '--backend', 'vllm', '--tensor-parallel', '2', '--batch-size', '16',
+                 '--max-model-len', '4096', '--max-input-tokens', '4096', '--max-new-tokens', '512',
+                 '--seed', '42', '--split', *config['splits']], f'extra_generate_{index}')
+        candidates = []
+        for path in (project / 'data/processed/responses').glob('*/*/run.bundle.json'):
+            bundle = json.loads(path.read_text());run = bundle['run_manifests'][0]
+            if (run['runtime']['configuration']['model_id'] == model and
+                    run['model_manifest_id'] == panel['manifest_id']):
+                candidates.append(path.parent)
+        if len(candidates) != 1 or not json.loads((candidates[0] / 'stats.json').read_text())['completed']:
+            raise ValueError('Expected one complete validation run for ' + model)
+        folder = candidates[0]
+        command(['python/evaluate_responses.py', 'label', '--run', str(folder),
+                 '--labeler', 'refusal_rules'], f'extra_rules_{index}')
+        report(folder, outputs / 'model_reports')
+        runs.append(folder)
+        checkpoint({'phase': 'generation', 'completed_model': model,
+                    'completed_extra_models': index + 1})
+        cache = Path(os.environ['HF_HOME']) / 'hub'
+        target = cache / ('models--' + model.replace('/', '--'))
+        if target.exists():
+            if target.resolve().parent != cache.resolve():
+                raise ValueError('Unexpected checkpoint cache path')
+            shutil.rmtree(target)
+    return runs
 
 
 def file_hash(path):
@@ -130,7 +195,7 @@ def copy_runs(source, project, prompt_bundle, expected_models=MODELS, expected_m
     return folders, provenance
 
 
-def label_runs(runs, outputs, command):
+def label_runs(runs, outputs, command, after_model=None):
     """Only label stored responses and export the audit; no assistant generation command."""
     for index, run in enumerate(runs):
         command(['python/evaluate_responses.py', 'label', '--run', str(run), '--labeler',
@@ -140,6 +205,8 @@ def label_runs(runs, outputs, command):
             raise ValueError('Expected one validated WildGuard label bundle per assistant')
         command(['python/data_contracts.py', 'validate', str(label_bundles[0]),
                  '--verify-artifacts'], f'validate_labels_{index}')
+        if after_model:
+            after_model(run, index)
     command(['python/evaluate_responses.py', 'audit', '--runs', *map(str, runs),
              '--overlap-groups',
              'data/processed/prompts/pilot_v5/wildguardmix_train_overlap_groups_v5.txt',
@@ -152,6 +219,8 @@ def main():
     working, inputs = Path('/kaggle/working'), Path('/kaggle/input')
     project, outputs = working / 'project', working / 'pilot_outputs'
     outputs.mkdir(exist_ok=True)
+    config = run_config(json.loads(Path(sys.argv[sys.argv.index('--config') + 1]).read_text())
+                        if '--config' in sys.argv else globals().get('RUN_CONFIG'))
     if not project.exists():
         subprocess.run(['git', 'clone', '--no-checkout', REPOSITORY, str(project)], check=True)
     subprocess.run(['git', 'checkout', '--detach', CODE_REVISION], cwd=project, check=True)
@@ -179,14 +248,22 @@ def main():
         worker = working / 'wildguard_worker.py'
         worker.write_text((project / 'scripts/kaggle/wildguard_runner.py').read_text().replace(
             "CODE_REVISION = 'SET_BY_PREPARE'", f"CODE_REVISION = '{CODE_REVISION}'", 1))
-        subprocess.run([python, '-u', str(worker), '--label-worker'], cwd=project, check=True)
+        config_path = working / 'scale_config.json'
+        config_path.write_text(json.dumps(config))
+        subprocess.run([python, '-u', str(worker), '--config', str(config_path), '--label-worker'],
+                       cwd=project, check=True)
         return
     subprocess.run([python, '-c', 'import torch; assert torch.cuda.device_count() >= 2, "Select T4 x2"'],
                    check=True)
     sys.path.insert(0, str(project / 'python'))
     sys.path.insert(0, str(project / 'scripts/kaggle'))
     from generate_responses import atomic_write
+    from report_model import report_model
     runs = []
+    state = {'phase': 'initializing'}
+    def checkpoint(status):
+        state.update(status)
+        save_checkpoint(working, project, outputs, dict(state))
     try:
         source, provenance = source_tree(inputs, working)
         prompt_bundle = json.loads((project / 'data/processed/prompts/pilot_v5/experiment.bundle.json').read_text())
@@ -198,17 +275,23 @@ def main():
         atomic_write(outputs / 'source_input.json', provenance)
         (outputs / 'code_revision.txt').write_text(CODE_REVISION + '\n')
         command = lambda args, name: helpers.stream_command(python, args, project, outputs, name)
-        label_runs(runs, outputs, command)
+        atomic_write(outputs / 'run_config.json', config)
+        checkpoint({'phase': 'upstream_copied', 'upstream_runs': len(runs)})
+        runs.extend(generate_extra_runs(project, outputs, config, command, checkpoint, report_model))
+        def labeled(run, index):
+            report_model(run, outputs / 'model_reports')
+            checkpoint({'phase': 'wildguard', 'completed_labels_models': index + 1,
+                        'run_folder': str(run)})
+        label_runs(runs, outputs, command, after_model=labeled)
         # Reuse the pilot summary format for the downstream graph and manual audit.
         command(['scripts/kaggle/summarize_pilot.py', '--extracted', str(project / 'data/processed'),
                  '--output', str(outputs / 'summary')], 'summary')
+        state.update({'phase': 'complete', 'models': len(runs)})
+    except BaseException as exc:
+        state.update({'phase': 'failed_or_interrupted', 'error_type': type(exc).__name__})
+        raise
     finally:
-        with tarfile.open(working / 'wildguard_outputs.tar.gz', 'w:gz') as archive:
-            archive.add(outputs, arcname='pilot_outputs')
-            responses = project / 'data/processed/responses'
-            if responses.exists():
-                archive.add(responses, arcname='responses')
-        print('Download /kaggle/working/wildguard_outputs.tar.gz', flush=True)
+        checkpoint(state)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,72 @@
+{
+  "model_manifests": [
+    {
+      "manifest_id": "models_42c219b34bc093eb760ab47f385244a81ee242fcb3fb70758c77b6462a20bf58",
+      "models": [
+        {
+          "chat_template_sha256": "cd8e9439f0570856fd70470bf8889ebd8b5d1107207f67a5efb46e342330527f",
+          "family": "Qwen2.5",
+          "model_id": "Qwen/Qwen2.5-7B-Instruct",
+          "precision": "float16",
+          "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "a09a35458c702b33eeacc393d103063234e8bc28"
+        },
+        {
+          "chat_template_sha256": "e10ca381b1ccc5cf9db52e371f3b6651576caee0a630b452e2816b2d404d4b65",
+          "family": "Llama-3.1",
+          "model_id": "meta-llama/Llama-3.1-8B-Instruct",
+          "precision": "float16",
+          "revision": "0e9e39f249a16976918f6564b8830bc894c89659",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "0e9e39f249a16976918f6564b8830bc894c89659"
+        },
+        {
+          "chat_template_sha256": "9ff2eb30a1d3e937a88108d74b1ab940891be58aa742be4e8c0ce1c1ad90588e",
+          "family": "Llama-3.1",
+          "model_id": "NousResearch/Hermes-3-Llama-3.1-8B",
+          "precision": "float16",
+          "revision": "896ea440e5a9e6070e3d8a2774daf2b481ab425b",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "896ea440e5a9e6070e3d8a2774daf2b481ab425b"
+        },
+        {
+          "chat_template_sha256": "58c1a1f04baa7adaeaba1f90267c3d57d9396f0c1f0129bdde9e76d3c6784af7",
+          "family": "Llama-3.1",
+          "model_id": "dphn/dolphin-2.9.4-llama3.1-8b",
+          "precision": "float16",
+          "revision": "ca1f6d135846b84f8216f3737970fbd292ea68b3",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "ca1f6d135846b84f8216f3737970fbd292ea68b3"
+        },
+        {
+          "chat_template_sha256": "ac7498a36a719da630e99d48e6ebc4409de85a77556c2b6159eeb735bcbd11df",
+          "family": "Llama-3.1",
+          "model_id": "allenai/Llama-3.1-Tulu-3-8B",
+          "precision": "float16",
+          "revision": "666943798adbde0b1aff34626007e26986a3c107",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "666943798adbde0b1aff34626007e26986a3c107"
+        },
+        {
+          "chat_template_sha256": "153280e3ff55d19da1398bdb3914ee2a51b80429bfaedde11d7d216c39db80f3",
+          "family": "Mistral-7B-v0.1",
+          "model_id": "teknium/OpenHermes-2.5-Mistral-7B",
+          "precision": "float16",
+          "revision": "24c0bea14d53e6f67f1fbe2eca5bfe7cae389b33",
+          "role": "primary_assistant",
+          "system_policy": "user_only_template_defaults",
+          "tokenizer_revision": "24c0bea14d53e6f67f1fbe2eca5bfe7cae389b33"
+        }
+      ],
+      "schema_version": "1.0.0",
+      "stage": "pilot",
+      "status": "frozen"
+    }
+  ]
+}
