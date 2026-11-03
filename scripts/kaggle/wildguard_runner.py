@@ -21,7 +21,8 @@ EXTRA_MODELS = ('Qwen/Qwen2.5-7B-Instruct', 'meta-llama/Llama-3.1-8B-Instruct',
 
 def run_config(value=None):
     config = {'models': list(EXTRA_MODELS), 'splits': ['validation'],
-              'model_manifest': 'manifests/models/scale6.bundle.json'}
+              'model_manifest': 'manifests/models/scale6.bundle.json',
+              'assistant_batch_size': 64, 'wildguard_batch_size': 64}
     config.update(value or {})
     if (len(config['models']) != len(set(config['models'])) or
             not set(config['models']).issubset(EXTRA_MODELS)):
@@ -30,6 +31,8 @@ def run_config(value=None):
         raise ValueError('The registered scale-up generates validation only')
     if config['model_manifest'] != 'manifests/models/scale6.bundle.json':
         raise ValueError('Use the frozen six-model manifest')
+    if config['assistant_batch_size'] != 64 or config['wildguard_batch_size'] != 64:
+        raise ValueError('The follow-up notebook uses batch size 64 for assistants and WildGuard')
     return config
 
 
@@ -54,7 +57,8 @@ def generate_extra_runs(project, outputs, config, command, checkpoint, report):
     for index, model in enumerate(config['models']):
         command(['python/generate_responses.py', '--prompts',
                  'data/processed/prompts/pilot_v5/experiment.bundle.json', '--models', config['model_manifest'],
-                 '--model', model, '--backend', 'vllm', '--tensor-parallel', '2', '--batch-size', '16',
+                 '--model', model, '--backend', 'vllm', '--tensor-parallel', '2',
+                 '--batch-size', str(config['assistant_batch_size']),
                  '--max-model-len', '4096', '--max-input-tokens', '4096', '--max-new-tokens', '512',
                  '--seed', '42', '--split', *config['splits']], f'extra_generate_{index}')
         candidates = []
@@ -195,11 +199,11 @@ def copy_runs(source, project, prompt_bundle, expected_models=MODELS, expected_m
     return folders, provenance
 
 
-def label_runs(runs, outputs, command, after_model=None):
+def label_runs(runs, outputs, command, after_model=None, batch_size=64):
     """Only label stored responses and export the audit; no assistant generation command."""
     for index, run in enumerate(runs):
         command(['python/evaluate_responses.py', 'label', '--run', str(run), '--labeler',
-                 'wildguard', '--tensor-parallel', '2'], f'wildguard_{index}')
+                 'wildguard', '--tensor-parallel', '2', '--batch-size', str(batch_size)], f'wildguard_{index}')
         label_bundles = list((run / 'labels').glob('wildguard-*/validation.bundle.json'))
         if len(label_bundles) != 1:
             raise ValueError('Expected one validated WildGuard label bundle per assistant')
@@ -282,7 +286,7 @@ def main():
             report_model(run, outputs / 'model_reports')
             checkpoint({'phase': 'wildguard', 'completed_labels_models': index + 1,
                         'run_folder': str(run)})
-        label_runs(runs, outputs, command, after_model=labeled)
+        label_runs(runs, outputs, command, after_model=labeled, batch_size=config['wildguard_batch_size'])
         # Reuse the pilot summary format for the downstream graph and manual audit.
         command(['scripts/kaggle/summarize_pilot.py', '--extracted', str(project / 'data/processed'),
                  '--output', str(outputs / 'summary')], 'summary')

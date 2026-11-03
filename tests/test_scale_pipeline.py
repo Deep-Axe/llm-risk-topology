@@ -70,7 +70,7 @@ class ScaleTest(unittest.TestCase):
             for args in commands:
                 if '--backend' in args:
                     for flag, expected in [('--max-new-tokens', '512'), ('--seed', '42'),
-                                           ('--batch-size', '16'), ('--max-input-tokens', '4096')]:
+                                           ('--batch-size', '64'), ('--max-input-tokens', '4096')]:
                         self.assertEqual(args[args.index(flag) + 1], expected)
                     self.assertEqual(args[args.index('--split') + 1:], ['validation'])
 
