@@ -4,6 +4,7 @@ huggingface_hub>=0.26.0,<1
 xxhash>=3.0.0
 datasets>=3.0.0,<4
 transformers>=4.46.0,<5
+sentencepiece==0.2.1
 sentence-transformers>=3.3.0
 accelerate>=1.1.0
 
