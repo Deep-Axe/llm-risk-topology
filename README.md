@@ -7,9 +7,10 @@ kept together when splitting data.
 A separate model-lineage analysis studies exposure through declared and inferred Hub relationships.
 Lineage edges are metadata evidence, not proof that behavior transfers.
 
-The stack has two paths:
+The pipeline:
 
 - **Hugging Face collector → HDFS → Pig:** collect a pinned metadata snapshot, normalize records and edges.
+- **MapReduce:** build a keyword index over model cards with Hadoop streaming (`mr/`).
 - **Spark/GraphX → Hive:** compute lineage statistics and exposure estimates, then store queryable tables.
 - **Frozen prompts → transformers or vLLM:** generate checkpoint-pinned responses with crash-resumable shards.
 - **WildGuard and refusal rules:** label fresh responses; export a separate sample for human checking.
@@ -35,7 +36,7 @@ bash scripts/run_exposure_wsl.sh METADATA_HDFS_RUN_ROOT
 python python/data_contracts.py validate data/processed/prompts/pilot_v5/experiment.bundle.json --verify-artifacts
 
 # Laptop validation example. Keep the registered settings for comparisons.
-python python/generate_responses.py --prompts data/processed/prompts/pilot_v5 --models manifests/models/laptop_qwen.bundle.json --model Qwen/Qwen2.5-1.5B-Instruct --backend transformers --split validation --batch-size 16 --max-new-tokens 256 --seed 42
+python python/generate_responses.py --prompts data/processed/prompts/pilot_v5/experiment.bundle.json --models manifests/models/laptop_qwen.bundle.json --model Qwen/Qwen2.5-1.5B-Instruct --backend transformers --split validation --batch-size 16 --max-new-tokens 256 --seed 42
 python python/evaluate_responses.py label --run RUN_FOLDER --labeler refusal_rules
 
 # Local embedding and cluster staging of a completed run.
