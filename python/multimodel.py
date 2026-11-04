@@ -21,6 +21,7 @@ KNOWN_MODELS = {
     'Qwen/Qwen2.5-1.5B-Instruct': ('Qwen', '1.5B'),
     'Qwen/Qwen2.5-7B-Instruct': ('Qwen', '7B'),
     'meta-llama/Llama-3.2-1B-Instruct': ('Llama', '1B'),
+    'HuggingFaceTB/SmolLM2-1.7B-Instruct': ('SmolLM', '1.7B'),
     'meta-llama/Llama-3.1-8B-Instruct': ('Llama', '8B'),
     'NousResearch/Hermes-3-Llama-3.1-8B': ('Llama', '8B'),
     'dphn/dolphin-2.9.4-llama3.1-8b': ('Llama', '8B'),
