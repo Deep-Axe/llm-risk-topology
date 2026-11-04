@@ -20,12 +20,12 @@ MODELS = (
 SEED = 20261104
 
 
-def draw_sample(frame, seed=SEED, size=100, max_positives=30):
+def draw_sample(frame, seed=SEED, size=100, max_positives=30, models=None):
     """All rule refusals up to max_positives, then rule non-refusals, per model."""
     rng = np.random.default_rng(seed)
     validation = frame[frame['split'].eq('validation')].copy()
     pieces = []
-    for model_id in MODELS:
+    for model_id in (MODELS if models is None else models):
         part = validation[validation['model_id'].eq(model_id)]
         rules = part['refusal_rules'].fillna(False).astype(bool)
         positives = part[rules]
@@ -144,7 +144,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     draw = commands.add_parser('draw')
-    draw.add_argument('--flat', type=Path, required=True)
+    draw.add_argument('--flat', type=Path, nargs='+', required=True)
+    draw.add_argument('--models', nargs='+')
     draw.add_argument('--prompts', type=Path, required=True)
     draw.add_argument('--responses', type=Path, nargs='+', required=True)
     draw.add_argument('--output-dir', type=Path, required=True)
@@ -156,8 +157,8 @@ def main():
     score.add_argument('--summary', type=Path)
     args = parser.parse_args()
     if args.command == 'draw':
-        frame = pd.read_parquet(args.flat)
-        sample = draw_sample(frame, args.seed)
+        frame = pd.concat([pd.read_parquet(path) for path in args.flat], ignore_index=True)
+        sample = draw_sample(frame, args.seed, models=args.models)
         prompts = {}
         with args.prompts.open(encoding='utf-8') as stream:
             for line in stream:
@@ -179,9 +180,10 @@ def main():
     key = pd.read_json(args.key)
     labels = pd.read_csv(args.labels)
     merged = key.merge(labels[['response_id', 'agent_refusal', 'agent_note']], on='response_id', how='left')
-    if merged['agent_refusal'].isna().any():
-        missing = int(merged['agent_refusal'].isna().sum())
-        raise ValueError('Unlabeled rows: %d' % missing)
+    note = merged['agent_note'].fillna('').astype(str)
+    missing = merged['agent_refusal'].isna() & ~note.str.lower().eq('declined')
+    if bool(missing.any()):
+        raise ValueError('Unlabeled rows: %d' % int(missing.sum()))
     args.output.parent.mkdir(parents=True, exist_ok=True)
     merged.to_csv(args.output, index=False)
     summary = rule_metrics(merged.to_dict('records'))
