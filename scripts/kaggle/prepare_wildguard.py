@@ -33,8 +33,8 @@ def prepare(output, revision, owner, models=None, splits=None):
                 'Run this notebook after version 7 of the two-model pilot finishes generation.\n',
                 'In Add-ons → Secrets, enable the existing HF_TOKEN (HF_Token is also accepted).\n',
                 'Select GPU T4 ×2 and Internet on, then Save Version → Save & Run All.\n',
-                'Notebook input: deepamahuja/llm-risk-topology-two-model-pilot (v7 outputs).\n',
-                'Refresh the Notebook input to version 7 after its outputs are published.\n',
+                'Inputs: pilot_v5 prompts and the private llm-risk-topology-v7-responses dataset.\n',
+                'The response dataset preserves both completed v7 runs and their original checksums.\n',
                 'Reuses Mistral and Zephyr; generates six validation-only assistants, then labels all eight.\n',
                 'Greedy decoding, seed 42, fp16, batch 64, context 4096, output limit 512 are fixed.\n',
                 'WildGuard labeling also uses batches of 64.\n',
@@ -49,11 +49,12 @@ def prepare(output, revision, owner, models=None, splits=None):
                 'title': 'LLM Risk Topology WildGuard v7', 'code_file': 'wildguard.ipynb',
                 'language': 'python', 'kernel_type': 'notebook', 'is_private': True,
                 'enable_gpu': True, 'enable_internet': True, 'machine_shape': 'NvidiaTeslaT4',
-                'dataset_sources': [owner + '/llm-risk-topology-pilot-v5'],
-                'kernel_sources': [owner + '/llm-risk-topology-two-model-pilot'],
+                'dataset_sources': [owner + '/llm-risk-topology-pilot-v5',
+                                    owner + '/llm-risk-topology-v7-responses'],
+                'kernel_sources': [],
                 'competition_sources': []}
-    # kernel_sources uses the documented owner/slug form. The runtime additionally
-    # rejects an attached output with a different generation revision or prompt set.
+    # The failed v7's published files were recovered into a private dataset. A
+    # Notebook input did not expose its archive; keep the runtime revision checks.
     for name, value in [('wildguard.ipynb', notebook), ('kernel-metadata.json', metadata)]:
         (output / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print('Prepared scale-up and WildGuard notebook:', output)

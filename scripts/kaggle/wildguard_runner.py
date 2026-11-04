@@ -126,8 +126,8 @@ def source_tree(inputs, working):
         raise ValueError('Attach exactly one upstream pilot output')
     markers = [p for p in inputs.rglob('code_revision.txt') if p.parent.name == 'pilot_outputs']
     if len(markers) != 1:
-        raise ValueError('v7 outputs are not available. Wait for generation to finish and attach '
-                         'the two-model pilot under Notebook inputs (kernel_sources).')
+        raise ValueError('Attach the private deepamahuja/llm-risk-topology-v7-responses dataset '
+                         'containing the recovered pilot_outputs.tar.gz or its extracted contents.')
     return markers[0].parent.parent, {'extracted_source_path': str(markers[0].parent.parent)}
 
 

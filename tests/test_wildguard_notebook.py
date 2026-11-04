@@ -106,6 +106,9 @@ class WildGuardHandoffTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             prompts, panel, source, project, _ = self.build(root)
+            direct, direct_evidence = WORKER.source_tree(source, root / 'direct_working')
+            self.assertEqual(direct, source)
+            self.assertIn('extracted_source_path', direct_evidence)
             inputs = root / 'input';inputs.mkdir()
             archive = inputs / 'pilot_outputs.tar.gz'
             with tarfile.open(archive, 'w:gz') as stream:
@@ -131,8 +134,9 @@ class WildGuardHandoffTest(unittest.TestCase):
             meta = json.loads((output / 'kernel-metadata.json').read_text())
             notebook = json.loads((output / 'wildguard.ipynb').read_text(encoding='utf-8'))
             self.assertTrue(meta['is_private'])
-            self.assertEqual(meta['kernel_sources'], ['deepamahuja/llm-risk-topology-two-model-pilot'])
-            self.assertTrue(meta['dataset_sources'])
+            self.assertEqual(meta['kernel_sources'], [])
+            self.assertEqual(meta['dataset_sources'], ['deepamahuja/llm-risk-topology-pilot-v5',
+                                                       'deepamahuja/llm-risk-topology-v7-responses'])
             source = ''.join(notebook['cells'][-1]['source'])
             self.assertIn("CODE_REVISION = '" + 'a' * 40 + "'", source)
             compile(source, 'wildguard.ipynb', 'exec')
