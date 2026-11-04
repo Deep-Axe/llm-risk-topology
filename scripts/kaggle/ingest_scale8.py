@@ -77,6 +77,18 @@ def copy_audit(source, destination):
     return str(destination)
 
 
+def cache_covers_run(cache, run):
+    """A shared scratch cache may cover the two old runs but none of the new runs."""
+    import pandas as pd
+    with Path(cache).open('rb') as stream:
+        available = set(pd.read_parquet(stream, columns=['response_id'])['response_id'])
+    wanted = {r['response_id'] for r in run['responses'] if r['status'] == 'success'}
+    overlap = wanted & available
+    if overlap and overlap != wanted:
+        raise ValueError('Scratch cache only partially covers a run')
+    return bool(wanted) and wanted <= available
+
+
 def reuse_scratch_vectors(cache, run, target):
     """Replay a trusted previous stage in scratch; production always runs the real stager."""
     import numpy as np
@@ -108,7 +120,8 @@ def reuse_scratch_vectors(cache, run, target):
     frame.to_parquet(target / 'responses.parquet', index=False)
 
 
-def ingest(output, project, archive=None, kernel=None, version=None, scratch=False, reuse_flat=None):
+def ingest(output, project, archive=None, kernel=None, version=None, scratch=False, reuse_flat=None,
+           audit_output=None):
     if reuse_flat and (not scratch or archive is None):
         raise ValueError('--reuse-flat is only for an offline scratch replay')
     # A fresh folder keeps interrupted extraction/staging from looking complete.
@@ -137,14 +150,23 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
         raise ValueError('Archive contains no response runs')
     for run in runs:
         labels = Counter(r['labeler_id'] for r in run['labels'])
+        wildguard = [r for r in run['labels'] if r['labeler_id'] == 'wildguard']
         item = {'model': run['context']['run_manifests'][0]['runtime']['configuration']['model_id'],
                 'run_id': run['context']['run_manifests'][0]['run_id'],
                 'completed': bool(run['stats'].get('completed')), 'responses': len(run['responses']),
                 'labels': dict(labels), 'wildguard_labels': labels.get('wildguard', 0),
+                'wildguard_parse_errors': sum(r['error'] == 'Unparseable WildGuard output' for r in wildguard),
+                'wildguard_errors': sum(r['error'] is not None for r in wildguard),
                 'label_errors': sum(bool(r.get('error')) for r in run['labels'])}
         evidence['runs'].append(item)
         print(json.dumps(item), flush=True)
     evidence['status'] = 'validated'
+    report = output / 'report' if scratch else project / 'report'
+    audits = list(extracted.rglob('manual_audit.csv'))
+    if len(audits) > 1:
+        raise ValueError('Ambiguous manual audit files')
+    destination = audit_output or report / 'evaluator/pilot_audit.csv'
+    evidence['audit'] = copy_audit(audits[0], destination) if audits else 'not_in_archive'
     save_json(output / 'ingestion.json', evidence)
     for run, item in zip(runs, evidence['runs']):
         if not item['completed']:
@@ -153,10 +175,12 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
         name = short_name(run)
         if scratch:
             target = output / 'staged' / ('layer2_flat_' + name)
-            if reuse_flat:
+            if reuse_flat and cache_covers_run(reuse_flat, run):
                 reuse_scratch_vectors(reuse_flat, run, target)
+                item['embedding_source'] = 'trusted_scratch_cache'
             else:
                 flatten(project, [run], target)
+                item['embedding_source'] = 'fresh_minilm'
             item['staging'] = str(target)
             item['cluster'] = 'not_run_scratch'
         else:
@@ -184,11 +208,6 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
             target.rename(backup)
         pending.rename(target)
         evidence['combined_v7'] = str(target)
-    audits = list(extracted.rglob('manual_audit.csv'))
-    if len(audits) > 1:
-        raise ValueError('Ambiguous manual audit files')
-    report = output / 'report' if scratch else project / 'report'
-    evidence['audit'] = copy_audit(audits[0], report / 'evaluator/pilot_audit.csv') if audits else 'not_in_archive'
     from behavior_summary import build
     from run_artifacts import discover_runs
     folders = [r['folder'] for r in runs if r['stats'].get('completed')] if scratch else discover_runs(
@@ -219,7 +238,8 @@ if __name__ == '__main__':
     parser.add_argument('--project', type=Path, default=ROOT)
     parser.add_argument('--scratch', action='store_true', help='Stage locally; leave production reports and cluster alone')
     parser.add_argument('--reuse-flat', type=Path,
-                        help='Scratch only: trusted existing MiniLM Parquet for these exact run IDs; rejoin current labels')
+                        help='Scratch only: reuse matching trusted MiniLM runs; embed entirely new runs normally')
+    parser.add_argument('--audit-output', type=Path, help='Explicit audit destination, also in scratch mode')
     args = parser.parse_args()
     ingest(args.output.resolve(), args.project.resolve(), args.archive, args.kernel, args.version,
-           args.scratch, args.reuse_flat)
+           args.scratch, args.reuse_flat, args.audit_output)

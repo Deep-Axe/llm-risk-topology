@@ -90,6 +90,11 @@ class IngestionTest(unittest.TestCase):
             frame.to_parquet(cache, index=False)
             run = {'responses': [row], 'labels': [{'response_id': 'r', 'labeler_id': 'wildguard',
                    'refusal': True, 'response_harmful': False, 'prompt_harmful': True}]}
+            self.assertTrue(ingest.cache_covers_run(cache, run))
+            new_row = {**row, 'response_id': 'new-model-response'}
+            self.assertFalse(ingest.cache_covers_run(cache, {'responses': [new_row]}))
+            with self.assertRaisesRegex(ValueError, 'partially covers'):
+                ingest.cache_covers_run(cache, {'responses': [row, new_row]})
             ingest.reuse_scratch_vectors(cache, run, root / 'stage')
             with (root / 'stage/responses.parquet').open('rb') as stream:
                 saved = pd.read_parquet(stream)
