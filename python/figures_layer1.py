@@ -137,12 +137,12 @@ def main():
         labels = [r['model_id'].split('/')[-1] for r in rows]
         ax.barh(labels, [r['descendants'] for r in rows], color='#c9d6e8', label='All descendants')
         ax.barh(labels, [r['safety_removed'] for r in rows], color='#c0504d',
-                label='Advertised as uncensored / abliterated')
+                label='Metadata matches the safety-removal keyword list')
         ax.invert_yaxis()
         for i, r in enumerate(rows):
             ax.text(r['descendants'], i, f" {r['share_safety_removed']:.0%}", va='center', fontsize=7)
         ax.set_xlabel('Descendants in the 50k snapshot')
-        ax.set_title('Descendants that advertise removed safety training')
+        ax.set_title('Descendants matching safety-removal keywords')
         ax.legend(fontsize=7, frameon=False, loc='lower right')
         fig.tight_layout()
         fig.savefig(args.output / 'safety_removed_descendants.png')
