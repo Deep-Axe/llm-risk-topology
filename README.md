@@ -1,8 +1,11 @@
 # LLM Risk Topology
 
 Does spectral boundary proximity in a response-embedding graph predict held-out behavior changes better than
-simpler baselines? A separate model-lineage analysis studies exposure through declared and inferred Hub relationships;
-lineage edges are metadata evidence, not proof that behavior transfers.
+simpler baselines? Behavior changes are measured on linked original and variant prompts, with related prompts
+kept together when splitting data.
+
+A separate model-lineage analysis studies exposure through declared and inferred Hub relationships.
+Lineage edges are metadata evidence, not proof that behavior transfers.
 
 The stack has two paths:
 

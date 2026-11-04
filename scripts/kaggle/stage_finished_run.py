@@ -132,10 +132,6 @@ def stage(project, run, short_name, existing_log=None):
         'pipeline_log': str(pipeline_log), 'embedding_device': 'cpu',
         'embedding_model': 'sentence-transformers/all-MiniLM-L6-v2',
         'embedding_revision': '1110a243fdf4706b3f48f1d95db1a4f5529b4d41'})
-    with (project / 'project_notes/agent_rounds/round3/A_report.md').open('a', encoding='utf-8') as stream:
-        stream.write(f"\nStaged {short_name}: {stats['model_id']}, {len(frame)} responses, labels {row['label_source']}. "
-                     f"HDFS/Spark/Hive all passed. Evidence: {row['mllib_evidence_folder']}. "
-                     f"Spark metrics: {'; '.join(metrics)}. Registered in report/pilot/staged_runs.tsv.\n")
     print(json.dumps(row), flush=True)
     for line in metrics:
         print(line, flush=True)

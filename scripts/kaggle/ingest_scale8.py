@@ -77,7 +77,40 @@ def copy_audit(source, destination):
     return str(destination)
 
 
-def ingest(output, project, archive=None, kernel=None, version=None, scratch=False):
+def reuse_scratch_vectors(cache, run, target):
+    """Replay a trusted previous stage in scratch; production always runs the real stager."""
+    import numpy as np
+    import pandas as pd
+    with Path(cache).open('rb') as stream:
+        frame = pd.read_parquet(stream)
+    rows = {r['response_id']: r for r in run['responses'] if r['status'] == 'success'}
+    frame = frame[frame['response_id'].isin(rows)].copy()
+    if len(frame) != len(rows) or frame['response_id'].duplicated().any():
+        raise ValueError('Scratch cache does not cover this exact run')
+    for row in frame.to_dict('records'):
+        source = rows[row['response_id']]
+        if any(row[key] != source[key] for key in ['model_id', 'prompt_id', 'output_tokens', 'output_truncated']):
+            raise ValueError('Scratch cache metadata differs from the validated run')
+        if row['text_chars'] != len(source['text']):
+            raise ValueError('Scratch cache text length differs')
+    vectors = np.vstack(frame['vector'].to_list())
+    if (vectors.shape != (len(rows), 384) or not np.isfinite(vectors).all() or
+            not np.allclose(np.linalg.norm(vectors, axis=1), 1, atol=1e-3)):
+        raise ValueError('Scratch cache requires normalized finite MiniLM vectors')
+    labels = {(r['response_id'], r['labeler_id']): r for r in run['labels']}
+    for column, labeler, key in [('refusal', 'wildguard', 'refusal'),
+                                ('response_harmful', 'wildguard', 'response_harmful'),
+                                ('prompt_harmful', 'wildguard', 'prompt_harmful'),
+                                ('refusal_rules', 'refusal_rules', 'refusal')]:
+        frame[column] = pd.array([labels.get((identity, labeler), {}).get(key)
+                                  for identity in frame['response_id']], dtype='boolean')
+    target.mkdir(parents=True, exist_ok=False)
+    frame.to_parquet(target / 'responses.parquet', index=False)
+
+
+def ingest(output, project, archive=None, kernel=None, version=None, scratch=False, reuse_flat=None):
+    if reuse_flat and (not scratch or archive is None):
+        raise ValueError('--reuse-flat is only for an offline scratch replay')
     # A fresh folder keeps interrupted extraction/staging from looking complete.
     output.mkdir(parents=True, exist_ok=False)
     if archive is None:
@@ -88,6 +121,9 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
                 'bytes': archive.stat().st_size, 'sha256': file_hash(archive),
                 'time': datetime.now(timezone.utc).isoformat(), 'scratch': scratch,
                 'status': 'validation_pending', 'runs': []}
+    if reuse_flat:
+        evidence['scratch_vector_cache'] = {'path': str(reuse_flat), 'sha256': file_hash(reuse_flat),
+            'note': 'Trusted prior MiniLM staging; vectors reused, labels rejoined from validated archive'}
     save_json(output / 'ingestion.json', evidence)
     from summarize_pilot import extract_archive
     extracted = output / 'extracted'
@@ -117,7 +153,10 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
         name = short_name(run)
         if scratch:
             target = output / 'staged' / ('layer2_flat_' + name)
-            flatten(project, [run], target)
+            if reuse_flat:
+                reuse_scratch_vectors(reuse_flat, run, target)
+            else:
+                flatten(project, [run], target)
             item['staging'] = str(target)
             item['cluster'] = 'not_run_scratch'
         else:
@@ -133,7 +172,12 @@ def ingest(output, project, archive=None, kernel=None, version=None, scratch=Fal
         target = (output / 'staged' if scratch else project / 'data/processed/analysis') / 'layer2_flat_v7'
         # Publish the combined replacement only after flattening succeeds.
         pending = output / 'combined_pending'
-        flatten(project, pair, pending)
+        if reuse_flat:
+            reuse_scratch_vectors(reuse_flat, {
+                'responses': [row for run in pair for row in run['responses']],
+                'labels': [row for run in pair for row in run['labels']]}, pending)
+        else:
+            flatten(project, pair, pending)
         target.parent.mkdir(parents=True, exist_ok=True)
         if target.exists():
             backup = target.with_name(target.name + '_before_' + output.name)
@@ -174,5 +218,8 @@ if __name__ == '__main__':
     parser.add_argument('--output', type=Path, required=True, help='New folder; never reuse a failed ingestion folder')
     parser.add_argument('--project', type=Path, default=ROOT)
     parser.add_argument('--scratch', action='store_true', help='Stage locally; leave production reports and cluster alone')
+    parser.add_argument('--reuse-flat', type=Path,
+                        help='Scratch only: trusted existing MiniLM Parquet for these exact run IDs; rejoin current labels')
     args = parser.parse_args()
-    ingest(args.output.resolve(), args.project.resolve(), args.archive, args.kernel, args.version, args.scratch)
+    ingest(args.output.resolve(), args.project.resolve(), args.archive, args.kernel, args.version,
+           args.scratch, args.reuse_flat)

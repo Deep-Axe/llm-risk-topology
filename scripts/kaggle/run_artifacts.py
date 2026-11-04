@@ -46,11 +46,25 @@ def load_run(folder):
     labels = []
     for policy in sorted((folder / 'labels').glob('*/labeler.json')):
         labels.extend(shards(policy.parent, 'response_labels', 'label_id'))
-    validate_bundle({**context, 'responses': responses, 'response_labels': labels})
+    if len({(r['response_id'], r['labeler_id']) for r in labels}) != len(labels):
+        raise ValueError('Multiple evaluator revisions need separate analysis runs')
+    combined = {**context, 'responses': responses, 'response_labels': labels}
+    validate_bundle(combined)
     verify_artifacts(context)
     for path in [folder / 'validation.bundle.json', *sorted((folder / 'labels').glob('*/validation.bundle.json'))]:
         if path.is_file():
-            validate_bundle(read_json(path))
+            saved = read_json(path)
+            # Exported validation bundles repeat the same token arrays. Equality to an
+            # already validated payload proves those records without another schema walk.
+            expected = {**context, 'responses': responses}
+            if 'response_labels' in saved:
+                if path.parent == folder:
+                    expected['response_labels'] = labels
+                else:
+                    labeler = read_json(path.parent / 'labeler.json')['labeler_id']
+                    expected['response_labels'] = [r for r in labels if r['labeler_id'] == labeler]
+            if saved != expected:
+                validate_bundle(saved)
     stats_path = folder / 'stats.json'
     stats = read_json(stats_path) if stats_path.exists() else {'completed': False}
     run = context['run_manifests'][0]

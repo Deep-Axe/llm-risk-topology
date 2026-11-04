@@ -61,8 +61,49 @@ class BehaviorTest(unittest.TestCase):
                 artifacts.shards(folder, 'responses', 'response_id')
             self.assertEqual(journal.read_bytes(), original)
 
+    def test_changed_validation_export_is_still_checked(self):
+        from test_inference_labels import InferenceTest
+        fixture = InferenceTest()
+        fixture.setUp()
+        with tempfile.TemporaryDirectory() as tmp:
+            folder, _ = fixture.generate(Path(tmp))
+            artifacts.load_run(folder)
+            saved = folder / 'validation.bundle.json'
+            bundle = artifacts.read_json(saved)
+            bundle['responses'][0]['response_id'] = 'r_' + '0' * 64
+            saved.write_text(json.dumps(bundle), encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'Invalid response identity'):
+                artifacts.load_run(folder)
+
 
 class IngestionTest(unittest.TestCase):
+    def test_scratch_cache_checks_exact_run_and_rejoins_fresh_labels(self):
+        import pandas as pd
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            row = {'response_id': 'r', 'model_id': 'm', 'prompt_id': 'p',
+                   'status': 'success', 'text': 'answer', 'output_tokens': 2, 'output_truncated': False}
+            frame = pd.DataFrame([{**{k: row[k] for k in [
+                'response_id', 'model_id', 'prompt_id', 'output_tokens', 'output_truncated']},
+                'text_chars': 6, 'vector': [1.] + [0.] * 383, 'refusal': False}])
+            cache = root / 'cache.parquet'
+            frame.to_parquet(cache, index=False)
+            run = {'responses': [row], 'labels': [{'response_id': 'r', 'labeler_id': 'wildguard',
+                   'refusal': True, 'response_harmful': False, 'prompt_harmful': True}]}
+            ingest.reuse_scratch_vectors(cache, run, root / 'stage')
+            with (root / 'stage/responses.parquet').open('rb') as stream:
+                saved = pd.read_parquet(stream)
+            self.assertTrue(saved.iloc[0]['refusal'])
+            self.assertTrue(pd.isna(saved.iloc[0]['refusal_rules']))
+            run['responses'][0]['model_id'] = 'different-model'
+            with self.assertRaisesRegex(ValueError, 'metadata differs'):
+                ingest.reuse_scratch_vectors(cache, run, root / 'wrong')
+
+    def test_scratch_cache_is_not_a_production_shortcut(self):
+        with self.assertRaisesRegex(ValueError, 'only for an offline scratch'):
+            ingest.ingest(Path('unused'), Path('unused'), archive=Path('unused'),
+                          reuse_flat=Path('unused'))
+
     def test_download_requests_only_archive_and_exact_version(self):
         api = MagicMock()
         response = MagicMock()
