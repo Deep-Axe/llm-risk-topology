@@ -84,12 +84,14 @@ def write_csv(path, rows):
             writer.writerows(rows)
 
 
-def build(run_folders, output):
+def build(run_folders, output, validated_runs=None):
     output.mkdir(parents=True, exist_ok=True)
     rows, associations, manifest = [], [], []
     for folder in run_folders:
         print('Validating behavior input: ' + str(folder), flush=True)
-        run = load_run(folder)
+        run = (validated_runs or {}).get(Path(folder).resolve())
+        if run is None:
+            run = load_run(folder)
         if not run['stats'].get('completed'):
             continue
         table, cut = summarize_run(run)
@@ -103,6 +105,9 @@ def build(run_folders, output):
              'Rows are separated by run, split, source, intent, variant and evaluator. Refusal rates use valid labels;',
              'truncation rates and output-token medians use successful responses. Smoke runs retain their run ID and',
              'selection limit. Replicas of the same run are counted once. No live-run output is included.', '',
+             'The laptop validation runs use a 256-token cap; the two Kaggle runs use 512. These tables describe',
+             'each recorded run, not a controlled estimate of model size or family effects. Compare source, intent',
+             'and variant strata rather than treating aggregate refusal as a safety score.', '',
              '| Model | Split | Label source | Refused n | Other n | Cut off among refused | Cut off among other |',
              '| --- | --- | --- | --- | --- | --- | --- |']
     for row in associations:
@@ -120,7 +125,8 @@ def build(run_folders, output):
                   'No valid WildGuard labels are available in these completed local runs yet.',
                   'The current phrase-rule results therefore do not measure WildGuard misclassification. Recompute this',
                   'table after ingestion and compare the human audit on cut-off and uncut answers. Keep the registered',
-                  'generation caps fixed; report the existing cut-offs and evaluate excluding them as a sensitivity check.'])
+                  'generation caps fixed; report the existing cut-offs and evaluate excluding them as a sensitivity check.',
+                  'Excluding cut-off responses changes the response mix; it does not correct the missing continuations.'])
     (output / 'truncation_note.md').write_text('\n'.join(notes) + '\n', encoding='utf-8')
     (output / 'behavior_sources.json').write_text(json.dumps({
         'generated_at': datetime.now(timezone.utc).isoformat(), 'runs': manifest}, indent=2) + '\n')
